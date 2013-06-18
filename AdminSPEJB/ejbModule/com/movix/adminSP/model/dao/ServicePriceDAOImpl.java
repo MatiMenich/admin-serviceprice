@@ -81,6 +81,8 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 					estrategia= Estrategia.DESCENDENTE;
 				if(spEntry.getStrategy().equals(""))
 					estrategia= Estrategia.FULLPRICE;
+				if(spEntry.getStrategy().equals("FULLPRICE"))
+					estrategia= Estrategia.FULLPRICE;
 				
 				TipoEnv tipoEnv;
 				if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms"))
