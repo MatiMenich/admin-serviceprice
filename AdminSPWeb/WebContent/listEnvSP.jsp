@@ -16,6 +16,12 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
+	
+	<!-- FancyBox -->
+	<script type="text/javascript" src="fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+	<link rel="stylesheet" href="fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+	<script type="text/javascript" src="fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+	
 	<script type="text/javascript" charset="utf-8">
 		$(document).ready( function () {
 			oTable = $('#example').dataTable({
@@ -38,6 +44,19 @@
 			$.extend( $.fn.dataTableExt.oStdClasses, {
 			    "sWrapper": "dataTables_wrapper form-inline"
 			} );
+			
+			$(".fancy").fancybox({
+				maxWidth	: 600,
+				maxHeight	: 600,
+				fitToView	: true,
+				width		: '70%',
+				height		: '70%',
+				padding		: 20,
+				autoSize	: true,
+				closeClick	: true,
+				openEffect	: 'elastic',
+				closeEffect	: 'fade'
+			});
 			
 			$('#search-box').keyup(function() {
 				oTable.fnFilter( $(this).val() );
@@ -75,15 +94,8 @@
 <div class="navbar navbar-inverse navbar-static-top hidden-print">
     <div class="navbar-inner">
         <ul class="nav">
-            <li><a href="#">SP</a></li>
-            <li class="active"><a href="#">Scheduling</a></li>
-            <li><a href="#">Admin3</a></li>
-            <li><a href="#">Admin4</a></li>
-            <li><a href="#">Admin5</a></li>
-            <li><a href="#">Admin6</a></li>
-            <li><a href="#">Admin7</a></li>
-            <li><a href="#">Admin8</a></li>
-            <li><a href="#">Admin9</a></li>
+            <li class="active"><a href="#">SP</a></li>
+            <li><a href="#">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
             <li><a href="mailto:dave@fontawesome.io"><i class="icon-user"></i>&nbsp; jperez</a></li>
@@ -111,6 +123,12 @@
         <form class="navbar-search pull-right">
             <input id="search-box" type="text" class="search-query" placeholder="Search">
         </form>
+        
+       	<div class="pull-right">
+       		<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-refresh icon-white"></i> </a>
+        	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo Servicio Precio </a>
+        	<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
+		</div>
     </div>
 </div>
 
@@ -142,7 +160,7 @@
         <td>${sp.getEstrategia() }</td>
         <td>${sp.getArgs() }</td>
         <td><i class="icon-ok-sign icon-large"></i></td>
-        <td class="center"><i class="icon-play icon-large"></i> <i class="icon-list-alt icon-large"></i> <i class="icon-time icon-large"></i> <i class="icon-edit icon-large"></i> <i class="icon-trash icon-large"></i></td>
+        <td class="center"><i class="icon-play icon-large"></i> <i class="icon-list-alt icon-large"></i> <i class="icon-time icon-large"></i> <a class="fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> <i class="icon-trash icon-large"></i></td>
 		</tr>
 		</c:forEach>
 		
