@@ -65,10 +65,7 @@
 		
 	</script>
 	
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/site.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/pygments.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.min.css">
 	
 	<style>
 	        .header{
@@ -98,7 +95,7 @@
             <li><a href="#">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
-            <li><a href="mailto:dave@fontawesome.io"><i class="icon-user"></i>&nbsp; jperez</a></li>
+            <li><a href="mailto:dave@fontawesome.io"><i class="icon-user icon-white icon-large"></i>&nbsp; MatiMenich</a></li>
         </ul>
     </div>
 </div>
@@ -151,7 +148,7 @@
 		<c:forEach var="sp" items="${sps}">
 		
 		<tr class="odd_gradeA">
-		<td class="center" width="1">${sp.getEstado().toString() }</td>
+		<td class="center" width="1">${sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle">' : sp.getEstado().toString()=="TESTING" ? '<img src="images/test.jpg" width="15" height="15" class="img-circle">' : '<img src="images/active.jpg" width="15" height="15" class="img-circle">'}</td>
         <td>${sp.getOperador().toString() }</td>
         <td>${sp.getTipoEnv() }</td>
         <td>${sp.getServicio()}</td>
@@ -160,7 +157,15 @@
         <td>${sp.getEstrategia() }</td>
         <td>${sp.getArgs() }</td>
         <td><i class="icon-ok-sign icon-large"></i></td>
-        <td class="center"><i class="icon-play icon-large"></i> <i class="icon-list-alt icon-large"></i> <i class="icon-time icon-large"></i> <a class="fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> <i class="icon-trash icon-large"></i></td>
+        <td class="center">
+        <div class="btn-group">
+        	<a class="btn fancy" data-fancybox-type="iframe" href="SPController?action=test&idSP=${sp.getId()}"><i class="icon-play icon-large"></i></a> 
+        	<a class="btn" href="#"><i class="icon-list-alt icon-large"></i></a> 
+        	<a class="btn" href="#"><i class="icon-time icon-large"></i></a> 
+        	<a class="btn fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> 
+        	<a class="btn btn-danger" href="#"><i class="icon-trash icon-white icon-large"></i></a>
+        </div>
+        </td>
 		</tr>
 		</c:forEach>
 		

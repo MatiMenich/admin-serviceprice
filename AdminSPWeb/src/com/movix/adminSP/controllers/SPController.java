@@ -60,6 +60,8 @@ public class SPController extends HttpServlet {
 					
 					int idSP = Integer.parseInt(request.getParameter("idSP"));
 					request.setAttribute("opList", Operador.values());
+					
+					//TODO: Buscar sp en cache segun id
 					EnvServicePriceDTO sp = new EnvServicePriceDTO(1,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true);
 					request.setAttribute("sp",sp);
 					
@@ -74,6 +76,19 @@ public class SPController extends HttpServlet {
 					request.setAttribute("opList", Operador.values());
 					forward= ADD;
 				}
+				
+				else if(action.equalsIgnoreCase("test")){
+					
+					int idSP = Integer.parseInt(request.getParameter("idSP"));
+					
+					//TODO: Buscar sp en cache segun id y elegir tipo de prueba
+					
+					forward="/pruebas/mms.jsp";
+					
+					
+					
+				}
+				
 			}else{
 					
 				
@@ -90,6 +105,12 @@ public class SPController extends HttpServlet {
 					sps.add(new BillServicePriceDTO(7,Operador.CLARO_SALVADOR, "sus3_ClaroSV_7733_cobro",0.06,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroSV_Bill","503|1|222|Cobro_222",true));
 					sps.add(new BillServicePriceDTO(8,Operador.CLARO_ARGENTINA, "sus3_ClaroAR_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroAR_Bill","493|1|7733|Suscripciones_7733",true));
 					sps.add(new BillServicePriceDTO(9,Operador.MOVISTAR_GUATEMALA, "sus3_MovistarGU_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelMovistarGU_Bill","283|1|8833|Suscripciones_8833",true));
+					
+					sps.get(0).activar();
+					sps.get(2).desactivar();
+					sps.get(4).activar();
+					sps.get(6).activar();
+					sps.get(7).desactivar();
 					request.setAttribute("sps", sps);
 					//sps.get(0).getEstado().toString();
 					
@@ -98,12 +119,17 @@ public class SPController extends HttpServlet {
 					forward=LIST_ENV_SP;
 					//public EnvServicePriceDTO(int id,Operador operador,TipoEnv tipo,String servicio,double precio,Estrategia estrategia,String canal,String args,boolean cache){
 					List<EnvServicePriceDTO> sps = new ArrayList<EnvServicePriceDTO>();
-					sps.add(new EnvServicePriceDTO(1,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(2,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.09, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(3,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.09, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(4,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(5,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.01, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
+					sps.add(new EnvServicePriceDTO(1,Operador.CLARO_SALVADOR,TipoEnv.MMS,"sus3_ClaroSV_7333_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
+					sps.add(new EnvServicePriceDTO(2,Operador.CLARO_ECUADOR,TipoEnv.MMS,"sus3_ClaroEC_4422_cobro_ASC",0.09, Estrategia.ASCENDENTE,"channelClaroEC_Bill","sus3_ClaroEC_4422_cobro_ASC/0.09",true));
+					sps.add(new EnvServicePriceDTO(3,Operador.CLARO_ECUADOR,TipoEnv.SMSWP,"sus3_ClaroEC_4422_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroEC_Bill","sus3_ClaroEC_4422_cobro_ASC/0.18",true));
+					sps.add(new EnvServicePriceDTO(4,Operador.ENTEL,TipoEnv.SMSWP,"sus3_ENTEL_258_cobro_ASC",1, Estrategia.ASCENDENTE,"channelENTEL_Bill","sus3_ENTEL_258_cobro_ASC/1",true));
+					sps.add(new EnvServicePriceDTO(5,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_8333_cobro_ASC",0.01, Estrategia.DESCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_8333_cobro_DSC/0.01",true));
 					//sps = cache.getAllEnv();
+					
+					sps.get(0).activar();
+					sps.get(2).desactivar();
+					sps.get(4).activar();
+					
 					request.setAttribute("sps", sps);
 				}
 				else if(type.equalsIgnoreCase("Rec")){
@@ -124,6 +150,14 @@ public class SPController extends HttpServlet {
 					sps.add(new RecServicePriceDTO(13,Operador.MOVISTAR_PERU, TipoRec.SMS, "258PEsms",0.01,258));
 					sps.add(new RecServicePriceDTO(14,Operador.CLARO_PERU, TipoRec.SMS, "258PEsms",0.01,258));
 					sps.add(new RecServicePriceDTO(15,Operador.CLARO_GUATEMALA, TipoRec.SMS, "258PEsms",0.01,258));
+					
+					sps.get(0).activar();
+					sps.get(2).desactivar();
+					sps.get(4).activar();
+					sps.get(6).activar();
+					sps.get(7).desactivar();
+					sps.get(8).desactivar();
+					sps.get(10).activar();
 			
 					//sps.get(0);
 					request.setAttribute("sps", sps);

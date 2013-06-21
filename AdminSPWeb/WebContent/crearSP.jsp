@@ -19,15 +19,16 @@
                 if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
                 	$("#canal-div").slideUp();
                     $("#cache-div").slideUp();
+                    $("#estrategia-div").slideUp();
                     $("#args-div").slideUp();
                     $("#la-div").slideDown();
                     $("#sp-div").slideDown();
                 }
-                else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS"){
+                else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
                 	$("#la-div").slideUp();
                 	$("#canal-div").slideDown();
                 	$("#sp-div").slideDown();
-                	$("#args-div").slideDown();
+                	$("#estrategia-div").slideDown();
                 	$("#cache-div").slideDown();
                 }
                 else{
@@ -35,14 +36,27 @@
                      $("#sp-div").slideUp();
                      $("#canal-div").slideUp();
                      $("#cache-div").slideUp();
+                     $("#estrategia-div").slideUp();
                      $("#args-div").slideUp();
                 }
+        });
+        
+        
+        //TODO: comportameinto default = Desplegar argumentos
+        $("#tipoEstrategia").change(function(){
+        	if($(this).val() == "fp" || $(this).val() == "asc" || $(this).val() == "dsc"){
+        		$("#args-div").slideDown();
+        	}
+        	else{
+        		$("#args-div").slideUp();
+        	}
         });
         
         $("#la-div").hide();
         $("#sp-div").hide();
         $("#canal-div").hide();
         $("#cache-div").hide();
+        $("#estrategia-div").hide();
         $("#args-div").hide();
         
         
@@ -130,6 +144,24 @@
 					</div>
 				</div>
 				
+				
+				<div id="estrategia-div" class="control-group">
+					<label class="control-label">Estrategia:</label>
+					<div class="controls">
+						<div class="row-fluid">
+							<div class="span12">
+								<select id="tipoEstrategia" name="tipoEstrategia" class="input-xlarge">
+							      <option>Seleccione Estrategia...</option>
+							      <option  value="fp">Full Price</option>
+							      <option  value="asc">Ascendente </option>
+							      <option  value="dsc">Descendente</option>
+							      <option  value="fin">Finance</option>
+							    </select>
+							</div>
+						</div>
+					</div>
+				</div>
+						
 				
 				
 				<div id="args-div" class="control-group">

@@ -16,47 +16,65 @@
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script>
 	$(document).ready(function() {
-        $("#tipoSP").change(function(){
-                if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
-                	$("#canal-div").slideUp();
-                    $("#cache-div").slideUp();
-                    $("#args-div").slideUp();
-                    $("#la-div").slideDown();
-                    $("#sp-div").slideDown();
-                }
-                else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS"){
-                	$("#la-div").slideUp();
-                	$("#canal-div").slideDown();
-                	$("#sp-div").slideDown();
-                	$("#args-div").slideDown();
-                	$("#cache-div").slideDown();
-                }
-                else{
-                	 $("#la-div").slideUp();
-                     $("#sp-div").slideUp();
-                     $("#canal-div").slideUp();
-                     $("#cache-div").slideUp();
-                     $("#args-div").slideUp();
-                }
-        });
-        
+		 $("#tipoSP").change(function(){
+             if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
+             	$("#canal-div").slideUp();
+                 $("#cache-div").slideUp();
+                 $("#estrategia-div").slideUp();
+                 $("#args-div").slideUp();
+                 $("#la-div").slideDown();
+                 $("#sp-div").slideDown();
+             }
+             else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
+             	$("#la-div").slideUp();
+             	$("#canal-div").slideDown();
+             	$("#sp-div").slideDown();
+             	$("#estrategia-div").slideDown();
+             	$("#cache-div").slideDown();
+             }
+             else{
+             	 $("#la-div").slideUp();
+                  $("#sp-div").slideUp();
+                  $("#canal-div").slideUp();
+                  $("#cache-div").slideUp();
+                  $("#estrategia-div").slideUp();
+                  $("#args-div").slideUp();
+             }
+     });
+		 
+		
+		
         if($("#tipoSP").val() == "RecSMS" || $("#tipoSP").val() =="RecMMS"){
         	$("#canal-div").hide();
             $("#cache-div").hide();
-            $("#args-div").hide();
+            $("#estrategia-div").hide();
         }
-        else if($("#tipoSP").val() == "EnvSMS" || $("#tipoSP").val() == "EnvMMS" || $("#tipoSP").val() == "EnvVSMS"){
+        else if($("#tipoSP").val() == "EnvSMS" || $("#tipoSP").val() == "EnvMMS" || $("#tipoSP").val() == "EnvVSMS" || $("#tipoSP").val() == "Bill"){
         	$("#la-div").hide();
         }
         else{
      	  	$("#la-div").hide();
             $("#sp-div").hide();
             $("#canal-div").hide();
+            $("#estrategia-div").hide();
             $("#cache-div").hide();
-            $("#args-div").hide();
         }
         
-        
+        $("#tipoEstrategia").change(function(){
+           	if($(this).val() == "fp" || $(this).val() == "asc" || $(this).val() == "dsc"){
+           		$("#args-div").slideDown();
+           	}
+           	else{
+           		$("#args-div").slideUp();
+           	}
+         });
+            
+   		if($("#tipoEstrategia").val() == "fp" || $("#tipoEstrategia").val() == "asc" || $("#tipoEstrategia").val() == "dsc"){
+   			//Hacer algo
+   		}
+   		else{
+   			$("#args-div").hide();
+   		}
         
       
 	});
@@ -162,6 +180,22 @@
 					</div>
 				</div>
 				
+				<div id="estrategia-div" class="control-group">
+					<label class="control-label">Estrategia:</label>
+					<div class="controls">
+						<div class="row-fluid">
+							<div class="span12">
+								<select id="tipoEstrategia" name="tipoEstrategia" class="input-xlarge">
+							      <option>Seleccione Estrategia...</option>
+							      <option  value="fp" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FULLPRICE" ? 'selected' : "" }>Full Price</option>
+							      <option  value="asc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="ASCENDENTE" ? 'selected' : "" }>Ascendente </option>
+							      <option  value="dsc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="DESCENDENTE" ? 'selected' : "" }>Descendente</option>
+							      <option  value="fin" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FINANCE" ? 'selected' : "" }>Finance</option>
+							    </select>
+							</div>
+						</div>
+					</div>
+				</div>
 				
 				
 				<div id="args-div" class="control-group">
@@ -187,6 +221,14 @@
 					</div>
 				</div>
 				 
+				
+				<!-- Textarea -->
+				<div class="control-group">
+				  <label class="control-label" for="textarea">Comentario:</label>
+				  <div class="controls">                     
+				    		<textarea id="text" name="text" placeholder="Ingrese un comentario..."></textarea>
+				  </div>
+				</div>
 
 				
 
