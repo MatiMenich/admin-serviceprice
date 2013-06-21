@@ -143,13 +143,13 @@ public class SPController extends HttpServlet {
 					sps.add(new RecServicePriceDTO(5,Operador.CLARO_ARGENTINA, TipoRec.MMS, "258ARmms",0.01,258));
 					sps.add(new RecServicePriceDTO(6,Operador.DIGICEL_PANAMA, TipoRec.SMS, "423PAsms",0.01,423));
 					sps.add(new RecServicePriceDTO(8,Operador.CLARO_PERU, TipoRec.MMS, "423PEmms",0.01,423));
-					sps.add(new RecServicePriceDTO(9,Operador.CLARO_ARGENTINA, TipoRec.MMS, "258PEmms",0.01,258));
-					sps.add(new RecServicePriceDTO(10,Operador.CLARO_HONDURAS, TipoRec.MMS, "258PEmms",0.01,258));
-					sps.add(new RecServicePriceDTO(11,Operador.CLARO_HONDURAS, TipoRec.MMS, "258PEmms",0.01,258));
-					sps.add(new RecServicePriceDTO(12,Operador.CLARO_ECUADOR, TipoRec.MMS, "258PEmms",0.01,258));
+					sps.add(new RecServicePriceDTO(9,Operador.CLARO_ARGENTINA, TipoRec.MMS, "258ARmms",0.01,258));
+					sps.add(new RecServicePriceDTO(10,Operador.CLARO_HONDURAS, TipoRec.MMS, "258HOmms",0.01,258));
+					sps.add(new RecServicePriceDTO(11,Operador.CLARO_HONDURAS, TipoRec.MMS, "25HOmms",0.01,258));
+					sps.add(new RecServicePriceDTO(12,Operador.CLARO_ECUADOR, TipoRec.MMS, "258ECmms",0.01,258));
 					sps.add(new RecServicePriceDTO(13,Operador.MOVISTAR_PERU, TipoRec.SMS, "258PEsms",0.01,258));
 					sps.add(new RecServicePriceDTO(14,Operador.CLARO_PERU, TipoRec.SMS, "258PEsms",0.01,258));
-					sps.add(new RecServicePriceDTO(15,Operador.CLARO_GUATEMALA, TipoRec.SMS, "258PEsms",0.01,258));
+					sps.add(new RecServicePriceDTO(15,Operador.CLARO_GUATEMALA, TipoRec.SMS, "258GUsms",0.01,258));
 					
 					sps.get(0).activar();
 					sps.get(2).desactivar();

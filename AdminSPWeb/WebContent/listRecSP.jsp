@@ -5,7 +5,6 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html">
-	<meta charset="utf-8">
 	<title>Admin SP</title>
 	
 	
@@ -16,7 +15,7 @@
 	<link href="css/demo_table_jui.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="css/DT_bootstrap.css">
 	<!-- Scripts -->
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
 	<script src="js/jquery.dataTables.columnFilter.js" type="text/javascript"></script>
@@ -35,13 +34,13 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "5%" },  
+					{ "sWidth": "5%" , "bSortable" : false},  
 					{ "sWidth": "30%" }, 
 					{ "sWidth": "15%" }, 
 					{ "sWidth": "15%"},
 					{ "sWidth": "15%"},
 					{ "sWidth": "10%"},
-					{ "sWidth": "10%"}
+					{ "sWidth": "10%" , "bSortable" : false}
 				]
 			}).columnFilter({
 				aoColumns:[
@@ -51,13 +50,12 @@
 					{ sSelector: "#LA" , type:"select" },
 					{ sSelector: "#servicio" , type:"select" },
 					{ sSelector: "#precio" , type:"select" },
-					{ sSelector: "#acciones" , type:"select" }
+					null
 					]
 			});
 			
 			$(".fancy").fancybox({
 				maxWidth	: 600,
-				maxHeight	: 600,
 				fitToView	: true,
 				width		: '70%',
 				height		: '70%',
@@ -151,7 +149,7 @@
     </div>
 </div>
 	
-	<!-- 
+<!-- 	
 	<table id="busq-avanzada">
 		<tr>
 			<td id="estado"></td>
@@ -163,8 +161,8 @@
 			<td id="acciones"></td>
 		</tr>
 	</table>
-	 -->
-
+ -->
+ 
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
 	<thead>
 		<tr>

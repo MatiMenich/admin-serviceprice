@@ -8,10 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Editar Servicio Precio</title>
 	
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/site.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/pygments.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.min.css">
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script>
@@ -40,6 +37,8 @@
                   $("#estrategia-div").slideUp();
                   $("#args-div").slideUp();
              }
+             
+             parent.$.fancybox.update();	
      });
 		 
 		
@@ -67,6 +66,10 @@
            	else{
            		$("#args-div").slideUp();
            	}
+           	
+           	$(":animated").promise( function (){
+           		parent.$.fancybox.update();
+           	});	
          });
             
    		if($("#tipoEstrategia").val() == "fp" || $("#tipoEstrategia").val() == "asc" || $("#tipoEstrategia").val() == "dsc"){

@@ -7,49 +7,64 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Nuevo Servicio Precio</title>
 	
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/site.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/pygments.css">
+	
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.min.css">
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	<script>
 	$(document).ready(function() {
         $("#tipoSP").change(function(){
+        	
+        	
                 if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
-                	$("#canal-div").slideUp();
-                    $("#cache-div").slideUp();
-                    $("#estrategia-div").slideUp();
-                    $("#args-div").slideUp();
-                    $("#la-div").slideDown();
-                    $("#sp-div").slideDown();
+                	$("#canal-div").hide();
+                    $("#cache-div").hide();
+                    $("#estrategia-div").hide();
+                    $("#args-div").hide();
+                    $("#la-div").show();
+                    $("#sp-div").show();
                 }
                 else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
-                	$("#la-div").slideUp();
-                	$("#canal-div").slideDown();
-                	$("#sp-div").slideDown();
-                	$("#estrategia-div").slideDown();
-                	$("#cache-div").slideDown();
+                	$("#la-div").hide();
+                	$("#canal-div").show();
+                	$("#sp-div").show();
+                	$("#estrategia-div").show();
+                	$("#cache-div").show();
                 }
                 else{
-                	 $("#la-div").slideUp();
-                     $("#sp-div").slideUp();
-                     $("#canal-div").slideUp();
-                     $("#cache-div").slideUp();
-                     $("#estrategia-div").slideUp();
-                     $("#args-div").slideUp();
+                	 $("#la-div").hide();
+                     $("#sp-div").hide();
+                     $("#canal-div").hide();
+                     $("#cache-div").hide();
+                     $("#estrategia-div").hide();
+                     $("#args-div").hide();
                 }
+                
+               
+                parent.$.fancybox.update();	
+
+           	
+               
+               
+               
         });
         
         
         //TODO: comportameinto default = Desplegar argumentos
         $("#tipoEstrategia").change(function(){
+        	
+        	
+        	
         	if($(this).val() == "fp" || $(this).val() == "asc" || $(this).val() == "dsc"){
-        		$("#args-div").slideDown();
+        		$("#args-div").show();
         	}
         	else{
-        		$("#args-div").slideUp();
+        		$("#args-div").hide();
         	}
+        	
+        	   
+        	parent.$.fancybox.update();
+             
         });
         
         $("#la-div").hide();

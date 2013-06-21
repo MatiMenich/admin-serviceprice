@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="ISO-8859-1"%>
+    pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -13,7 +13,7 @@
 	<link href="css/demo_table_jui.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="css/DT_bootstrap.css">
 	<!-- Scripts -->
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
 	<!-- FancyBox -->
@@ -28,15 +28,15 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "5%" },  
+					{ "sWidth": "5%"  , "bSortable" : false },  
 					{ "sWidth": "10%" }, 
 					{ "sWidth": "15%" }, 
 					{ "sWidth": "5%"},
 					{ "sWidth": "15%"},
 					{ "sWidth": "10%"},
 					{ "sWidth": "25%"},
-					{ "sWidth": "5%"},
-					{ "sWidth": "10%"}
+					{ "sWidth": "5%" , "bSortable" : false},
+					{ "sWidth": "10%" , "bSortable" : false }
 				]
 			});
 			$.extend( $.fn.dataTableExt.oStdClasses, {
@@ -45,7 +45,7 @@
 			
 			$(".fancy").fancybox({
 				maxWidth	: 600,
-				maxHeight	: 600,
+				maxHeight  : 600,
 				fitToView	: true,
 				width		: '70%',
 				height		: '70%',
@@ -108,9 +108,9 @@
 <div class="navbar navbar-inverse navbar-static-top">
     <div class="navbar-inner">
         <ul class="nav">
-            <li><a href="SPController?type=Env">Envío</a></li>
+            <li><a href="SPController?type=Env">EnvÃ­o</a></li>
             <li class="divider-vertical"></li>
-            <li><a href="SPController?type=Rec">Recepción</a></li>
+            <li><a href="SPController?type=Rec">RecepciÃ³n</a></li>
             <li class="divider-vertical"></li>
             <li class="active"><a href="SPController?type=Bill">Billing</a></li>
             <li class="divider-vertical"></li>
@@ -123,7 +123,7 @@
         <div class="pull-right">
        		<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-refresh icon-white"></i> </a>
         	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo Servicio Precio </a>
-        	<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
+        	<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-search icon-white"></i> BÃºsqueda Avanzada </a> 
 		</div>
         
     </div>

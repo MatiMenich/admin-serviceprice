@@ -13,7 +13,7 @@
 	<link href="css/demo_table_jui.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="css/DT_bootstrap.css">
 	<!-- Scripts -->
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
 	
@@ -29,7 +29,7 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "5%" },  
+					{ "sWidth": "5%" , "bSortable" : false},  
 					{ "sWidth": "5%" },
 					{ "sWidth": "5%" },
 					{ "sWidth": "15%"}, 
@@ -37,8 +37,8 @@
 					{ "sWidth": "15%"},
 					{ "sWidth": "10%"},
 					{ "sWidth": "24%"},
-					{ "sWidth": "3%" },
-					{ "sWidth": "13%"}
+					{ "sWidth": "3%" , "bSortable" : false},
+					{ "sWidth": "13%", "bSortable" : false}
 				]
 			});
 			$.extend( $.fn.dataTableExt.oStdClasses, {
@@ -47,7 +47,6 @@
 			
 			$(".fancy").fancybox({
 				maxWidth	: 600,
-				maxHeight	: 600,
 				fitToView	: true,
 				width		: '70%',
 				height		: '70%',
