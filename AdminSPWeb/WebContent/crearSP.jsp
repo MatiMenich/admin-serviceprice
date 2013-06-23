@@ -10,9 +10,103 @@
 	
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 	
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.validate.js"></script>
 	<script>
 	$(document).ready(function() {
+		
+		$.validator.addMethod('positiveNumber',
+			    function (value) { 
+			        return Number(value) > 0;
+			    }, 'Ingrese un número positivo.');
+		
+		
+		 var RecRules = {
+				 
+				 	servicio: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un servicio",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    },
+	        	    
+	        	    la: {
+	        	        required: true,
+	        	        number: true,
+	        	        positiveNumber: true,
+	        	        messages: {
+	        	        	required: "Ingrese un LA",
+	        	            number: "Ingrese un número válido"
+	        	        }
+	        	    },
+	        	    
+	        	    precio: {
+	        	    	required:true,
+	        	    	number: true,
+	        	    	positiveNumber: true,
+	        	    	messages: {
+	        	        	required: "Ingrese un precio",
+	        	            number: "Ingrese un número válido"
+	        	    	}
+	        	    }
+	        };
+		 
+		 var EnvRules = {
+				 
+				 	servicio: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un servicio",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    },
+	        	    
+	        	     precio: {
+	        	    	required:true,
+	        	    	number: true,
+	        	    	positiveNumber: true,
+	        	    	messages: {
+	        	        	required: "Ingrese un precio",
+	        	            number: "Ingrese un número válido"
+	        	    	}
+	        	    },
+	        	    
+	        	    canal: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un canal",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    }
+	        };
+	        
+	        function addRules(rulesObj){
+	            for (var item in rulesObj){
+	               $('#'+item).rules('add',rulesObj[item]);  
+	            } 
+	        }
+
+	        function removeRules(rulesObj){
+	            for (var item in rulesObj){
+	               $('#'+item).rules('remove');  
+	            } 
+	        }
+		
+	        $('#SPform').validate({
+	            submitHandler: function(){
+	              alert('submit was successful'); 
+	            },
+	        	errorPlacement: function(error, element) {
+		           error.insertAfter(element);
+		           parent.$.fancybox.update(); 
+	        	}
+	        });
+	    
+		
         $("#tipoSP").change(function(){
         	
         	
@@ -23,6 +117,8 @@
                     $("#args-div").hide();
                     $("#la-div").show();
                     $("#sp-div").show();
+                    removeRules(EnvRules);
+                    addRules(RecRules);
                 }
                 else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
                 	$("#la-div").hide();
@@ -30,6 +126,8 @@
                 	$("#sp-div").show();
                 	$("#estrategia-div").show();
                 	$("#cache-div").show();
+                	removeRules(RecRules);
+                    addRules(EnvRules);
                 }
                 else{
                 	 $("#la-div").hide();
@@ -41,11 +139,19 @@
                 }
                 
                
-                parent.$.fancybox.update();	
+               
 
-           	
+                $('#SPform').validate({
+    	            submitHandler: function(){
+    	              alert('submit was successful'); 
+    	            },
+    	        	errorPlacement: function(error, element) {
+    		           error.insertAfter(element);
+    		           parent.$.fancybox.update(); 
+    	        	}
+    	        });
                
-               
+                parent.$.fancybox.update();	
                
         });
         
@@ -55,11 +161,18 @@
         	
         	
         	
-        	if($(this).val() == "fp" || $(this).val() == "asc" || $(this).val() == "dsc"){
+        	if($(this).val() == "fp" || $(this).val() == "fin"){
         		$("#args-div").show();
+        		$("#sps-div").hide();
         	}
-        	else{
+        	else if($(this).val() == "asc" || $(this).val() == "dsc"){
         		$("#args-div").hide();
+        		$("#sps-div").show();
+        	}
+        	
+        	else{
+        		$("#args-div").show();
+        		$("#sps-div").hide();
         	}
         	
         	   
@@ -73,9 +186,55 @@
         $("#cache-div").hide();
         $("#estrategia-div").hide();
         $("#args-div").hide();
+        $("#sps-div").hide();
+        
+        var i =1;
+        
+        $("#addSP").click(function() {
+            var fieldWrapper = $("<div class=\"fieldwrapper\" id=\"field" + i + "\"/>");
+            var fName = $("<input type=\"text\" id='newSP"+i+"' />");
+            var removeButton = $(' <a class="remove btn btn-danger" href="#"><i class="icon-remove icon-white"></i></a>');
+            removeButton.click(function() {
+                $(this).parent().remove();
+                $(this).parent().rules('remove');
+                i--;
+            });
+            fieldWrapper.append(fName);
+            fieldWrapper.append(removeButton);
+            $("#addSPs").append(fieldWrapper);
+            parent.$.fancybox.update();
+            
+            $('#newSP'+i).rules('add',{
+    	        required: true,
+    	        minlength: 2,
+    	        messages: {
+    	            required: "Ingrese un SP",
+    	            minlength: "Largo mayor que 2"
+    	        }
+            });
+            
+            i++;
+            
+            $('#SPform').validate({
+	            submitHandler: function(){
+	              alert('submit was successful'); 
+	            },
+	        	errorPlacement: function(error, element) {
+		           error.insertAfter(element);
+		           parent.$.fancybox.update(); 
+	        	}
+	        });
+            
+            
+        });
+        
+       
+       
         
         
 	});
+	
+	
 	</script>
 	
 	<style type="text/css">	body{background-color : #f9f9f9;}</style>
@@ -86,17 +245,17 @@
 
 <body>
 
-  	<form class="form-horizontal" method="post" action="SPController">
+  	<form class="form-horizontal" id="SPform" method="post" action="SPController">
 			<fieldset>
 				<legend>Nuevo Servicio Precio</legend>
 
 				
 				<div class="control-group">
-					<label class="control-label">Seleccione Operador: </label>
+					<label class="control-label">Operador: </label>
 					<div class="controls">
 						  <select id="selectOperador" name="selectOperador" class="input-xlarge">
 							  	<c:forEach var="op" items="${opList}">
-							  		<option>${op.toString() }</option>
+							  		<option value="${op.toString() }">${op.toString() }</option>
 						  		</c:forEach>
 						  </select>
 					</div>
@@ -123,7 +282,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span3">
-								<input id="la" type="text" class="input-block-level" autocomplete="off"  >
+								<input id="la" name="la" type="text" class="input-block-level" >
 							</div>
 						</div>
 					</div>
@@ -136,7 +295,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span10">
-								<input id="canal" type="text" class="input-block-level" autocomplete="off"  >
+								<input id="canal" name="canal" type="text" class="input-block-level" >
 							</div>
 						</div>
 					</div>
@@ -150,10 +309,10 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span9">
-								<input id="servicio" type="text" class="input-block-level" autocomplete="off"   >
+								<input id="servicio" name="servicio" type="text" class="input-block-level"  >
 							</div>
 							<div class="span3">
-								<input id="precio" type="text" class="input-block-level" autocomplete="off"   >
+								<input id="precio" name="precio" type="text" class="input-block-level"  >
 							</div>
 						</div>
 					</div>
@@ -177,6 +336,17 @@
 					</div>
 				</div>
 						
+				<div id="sps-div" class="control-group">
+					<label class="control-label">Ingrese SP(s): </label>
+						<div class="controls">
+							
+								<fieldset id="addSPs">
+								</fieldset>
+								
+								<input type="button" value="Agregar SP" class="addSP btn" id="addSP" name="addSP"/>
+						
+						</div>
+				</div>	
 				
 				
 				<div id="args-div" class="control-group">
@@ -184,7 +354,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span12">
-								<input id="args" type="text" class="input-block-level" autocomplete="off"  >
+								<input id="args" name="args" type="text" class="input-block-level"  >
 							</div>
 						</div>
 					</div>
@@ -197,7 +367,7 @@
 					<label class="control-label">Cache</label>
 					<div class="controls">
 						<div class="row-fluid">
-							 <input type="checkbox" name="checkboxes" id="checkboxes-0" value="Option one">
+							 <input type="checkbox" name="cache" id="cache" value="hasCache">
 						</div>
 					</div>
 				</div>

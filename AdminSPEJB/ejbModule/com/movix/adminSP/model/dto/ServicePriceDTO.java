@@ -14,7 +14,7 @@ public abstract class ServicePriceDTO {
 	protected Operador operador;
 	
 	public enum Estrategia{
-		ASCENDENTE,DESCENDENTE,FULLPRICE
+		ASCENDENTE,DESCENDENTE,FULLPRICE,FINANCE
 	}
 	
 	

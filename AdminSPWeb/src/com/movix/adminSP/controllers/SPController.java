@@ -184,6 +184,17 @@ public class SPController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		String type = request.getParameter("tipoSP");
+		String idSP = request.getParameter("idSP");
+		
+		if(idSP!=null){
+			//TODO: accion editar
+		}
+		
+		if(type.equalsIgnoreCase("RecMMS") || type.equalsIgnoreCase("RecSMS")){
+			
+		}
+		
 		RequestDispatcher view = request.getRequestDispatcher(ERROR_PAGE);
 		view.forward(request, response);
 		

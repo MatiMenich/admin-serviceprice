@@ -13,4 +13,5 @@ public interface ServicePriceDAO {
 	
 	public List<ServicePriceDTO> findALL();
 	
+	public List<ServicePriceDTO> findActive();
 }
