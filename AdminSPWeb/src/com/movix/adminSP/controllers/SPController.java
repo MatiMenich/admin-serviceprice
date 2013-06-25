@@ -3,6 +3,7 @@ package com.movix.adminSP.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,15 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.movix.adminSP.cache.SPCache;
 import com.movix.adminSP.model.dto.BillServicePriceDTO;
 import com.movix.adminSP.model.dto.EnvServicePriceDTO;
 import com.movix.adminSP.model.dto.RecServicePriceDTO;
-import com.movix.adminSP.model.dto.ServicePriceDTO;
-import com.movix.adminSP.model.dto.EnvServicePriceDTO.TipoEnv;
 import com.movix.adminSP.model.dto.RecServicePriceDTO.TipoRec;
-import com.movix.adminSP.model.dto.ServicePriceDTO.Estrategia;
+import com.movix.adminSP.model.dto.ServicePriceDTO;
 import com.movix.shared.Operador;
-import com.movixla.ldap.LDAPResponse;
 
 /**
  * Servlet implementation class SPController
@@ -29,7 +28,7 @@ import com.movixla.ldap.LDAPResponse;
 @WebServlet("/SPController")
 public class SPController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    //SPCache cache;   
+    private SPCache cacheSP;   
     private static String EDIT ="/editarSP.jsp";
     private static String ADD ="/crearSP.jsp";
     private static String LIST_BILL_SP ="/listBillSP.jsp";
@@ -39,8 +38,8 @@ public class SPController extends HttpServlet {
     
     public SPController() {
         super();
-        //cache = new SPCache();
-        //cache.init();
+        cacheSP = new SPCache();
+        cacheSP.init();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,16 +52,15 @@ public class SPController extends HttpServlet {
 		//if(ldapResponse!=null&&ldapResponse.isTieneExito()){
 			if(action!=null){
 				if(action.equalsIgnoreCase("refresh")){
-					//cache.refreshCacheSP();				
-					//TODO: Refrescar lista página
+					//cache.refreshCacheSP();
+					
 				}
 				else if(action.equalsIgnoreCase("edit")){
 					
 					int idSP = Integer.parseInt(request.getParameter("idSP"));
 					request.setAttribute("opList", Operador.values());
 					
-					//TODO: Buscar sp en cache segun id
-					EnvServicePriceDTO sp = new EnvServicePriceDTO(1,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_7333_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true);
+					ServicePriceDTO sp = cacheSP.getSP(idSP);
 					request.setAttribute("sp",sp);
 					
 					forward = EDIT;
@@ -81,11 +79,22 @@ public class SPController extends HttpServlet {
 					
 					int idSP = Integer.parseInt(request.getParameter("idSP"));
 					
-					//TODO: Buscar sp en cache segun id y elegir tipo de prueba
+					ServicePriceDTO sp = cacheSP.getSP(idSP);
 					
-					forward="/pruebas/mms.jsp";
-					
-					
+					if(sp.getTipo().equals("Billing")){
+						forward="/pruebas/bill.jsp";
+					}
+					else{
+						EnvServicePriceDTO envSp = (EnvServicePriceDTO)sp;
+						if(envSp.getTipoEnv().toString().equals("VSMS"))
+							forward="/pruebas/vsms.jsp";
+						else if(envSp.getTipoEnv().toString().equals("MMS"))
+							forward="/pruebas/mms.jsp";
+						else
+							forward="/pruebas/smswp.jsp";
+					}
+									
+					request.setAttribute("idSP", idSP);
 					
 				}
 				
@@ -95,36 +104,28 @@ public class SPController extends HttpServlet {
 				if(type.equalsIgnoreCase("Bill")){
 					forward=LIST_BILL_SP;
 					List<BillServicePriceDTO> sps = new ArrayList<BillServicePriceDTO>();
-					//sps = cache.getAllBill();
-					sps.add(new BillServicePriceDTO(1,Operador.ENTEL, "sus3_ENTELCL_7733_cobro",0.09,ServicePriceDTO.Estrategia.FULLPRICE,"channelEntelCL_Bill","493|1|7733|Suscripciones_7733",true));
-					sps.add(new BillServicePriceDTO(2,Operador.CLARO_ARGENTINA, "sus3_ClaroAR_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroAr_Bill","493|1|7733|Suscripciones_7733",true));
-					sps.add(new BillServicePriceDTO(3,Operador.ENTEL, "sus3_EntelCL_3123_cobro",0.07,ServicePriceDTO.Estrategia.FULLPRICE,"channelEntelCL_Bill","",true));
-					sps.add(new BillServicePriceDTO(4,Operador.ENTEL, "sus3_EntelCL_3123_cobro",0.06,ServicePriceDTO.Estrategia.FULLPRICE,"channelEntelCL_Bill","493|1|7733",true));
-					sps.add(new BillServicePriceDTO(5,Operador.CLARO_ARGENTINA, "sus3_ClaroAR_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroAR_Bill","7223|Suscripciones_7223",true));
-					sps.add(new BillServicePriceDTO(6,Operador.CLARO_ARGENTINA, "sus3_ClaroAR_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroAR_Bill","503|1|222|Cobro_222",true));
-					sps.add(new BillServicePriceDTO(7,Operador.CLARO_SALVADOR, "sus3_ClaroSV_7733_cobro",0.06,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroSV_Bill","503|1|222|Cobro_222",true));
-					sps.add(new BillServicePriceDTO(8,Operador.CLARO_ARGENTINA, "sus3_ClaroAR_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelClaroAR_Bill","493|1|7733|Suscripciones_7733",true));
-					sps.add(new BillServicePriceDTO(9,Operador.MOVISTAR_GUATEMALA, "sus3_MovistarGU_7733_cobro",0.08,ServicePriceDTO.Estrategia.FULLPRICE,"channelMovistarGU_Bill","283|1|8833|Suscripciones_8833",true));
+					try {
+						sps = cacheSP.getAllBill();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
-					sps.get(0).activar();
-					sps.get(2).desactivar();
-					sps.get(4).activar();
-					sps.get(6).activar();
-					sps.get(7).desactivar();
 					request.setAttribute("sps", sps);
-					//sps.get(0).getEstado().toString();
 					
 				}
 				else if(type.equalsIgnoreCase("Env")){
 					forward=LIST_ENV_SP;
-					//public EnvServicePriceDTO(int id,Operador operador,TipoEnv tipo,String servicio,double precio,Estrategia estrategia,String canal,String args,boolean cache){
+					
 					List<EnvServicePriceDTO> sps = new ArrayList<EnvServicePriceDTO>();
-					sps.add(new EnvServicePriceDTO(1,Operador.CLARO_SALVADOR,TipoEnv.MMS,"sus3_ClaroSV_7333_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_7333_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(2,Operador.CLARO_ECUADOR,TipoEnv.MMS,"sus3_ClaroEC_4422_cobro_ASC",0.09, Estrategia.ASCENDENTE,"channelClaroEC_Bill","sus3_ClaroEC_4422_cobro_ASC/0.09",true));
-					sps.add(new EnvServicePriceDTO(3,Operador.CLARO_ECUADOR,TipoEnv.SMSWP,"sus3_ClaroEC_4422_cobro_ASC",0.18, Estrategia.ASCENDENTE,"channelClaroEC_Bill","sus3_ClaroEC_4422_cobro_ASC/0.18",true));
-					sps.add(new EnvServicePriceDTO(4,Operador.ENTEL,TipoEnv.SMSWP,"sus3_ENTEL_258_cobro_ASC",1, Estrategia.ASCENDENTE,"channelENTEL_Bill","sus3_ENTEL_258_cobro_ASC/1",true));
-					sps.add(new EnvServicePriceDTO(5,Operador.CLARO_SALVADOR,TipoEnv.SMSWP,"sus3_ClaroSV_8333_cobro_ASC",0.01, Estrategia.DESCENDENTE,"channelClaroSV_Bill","sus3_ClaroSV_8333_cobro_DSC/0.01",true));
-					//sps = cache.getAllEnv();
+					
+					
+					try {
+						sps = cacheSP.getAllEnv();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					sps.get(0).activar();
 					sps.get(2).desactivar();
@@ -135,31 +136,14 @@ public class SPController extends HttpServlet {
 				else if(type.equalsIgnoreCase("Rec")){
 					forward=LIST_REC_SP;
 					List<RecServicePriceDTO> sps =  new ArrayList<RecServicePriceDTO>();
-					//sps = cache.getAllRec();
-					sps.add(new RecServicePriceDTO(1,Operador.CLARO_PERU, TipoRec.MMS, "258PEmms",0.09,258));
-					sps.add(new RecServicePriceDTO(2,Operador.CLARO_PERU, TipoRec.MMS, "423PEmms",0,423));
-					sps.add(new RecServicePriceDTO(3,Operador.MOVISTAR_PERU, TipoRec.MMS, "423PEmms",0,423));
-					sps.add(new RecServicePriceDTO(4,Operador.CLARO_PERU, TipoRec.MMS, "258PEmms",0.01,258));
-					sps.add(new RecServicePriceDTO(5,Operador.CLARO_ARGENTINA, TipoRec.MMS, "258ARmms",0.01,258));
-					sps.add(new RecServicePriceDTO(6,Operador.DIGICEL_PANAMA, TipoRec.SMS, "423PAsms",0.01,423));
-					sps.add(new RecServicePriceDTO(8,Operador.CLARO_PERU, TipoRec.MMS, "423PEmms",0.01,423));
-					sps.add(new RecServicePriceDTO(9,Operador.CLARO_ARGENTINA, TipoRec.MMS, "258ARmms",0.01,258));
-					sps.add(new RecServicePriceDTO(10,Operador.CLARO_HONDURAS, TipoRec.MMS, "258HOmms",0.01,258));
-					sps.add(new RecServicePriceDTO(11,Operador.CLARO_HONDURAS, TipoRec.MMS, "25HOmms",0.01,258));
-					sps.add(new RecServicePriceDTO(12,Operador.CLARO_ECUADOR, TipoRec.MMS, "258ECmms",0.01,258));
-					sps.add(new RecServicePriceDTO(13,Operador.MOVISTAR_PERU, TipoRec.SMS, "258PEsms",0.01,258));
-					sps.add(new RecServicePriceDTO(14,Operador.CLARO_PERU, TipoRec.SMS, "258PEsms",0.01,258));
-					sps.add(new RecServicePriceDTO(15,Operador.CLARO_GUATEMALA, TipoRec.SMS, "258GUsms",0.01,258));
+					try {
+						sps = cacheSP.getAllRec();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
-					sps.get(0).activar();
-					sps.get(2).desactivar();
-					sps.get(4).activar();
-					sps.get(6).activar();
-					sps.get(7).desactivar();
-					sps.get(8).desactivar();
-					sps.get(10).activar();
-			
-					//sps.get(0);
+				
 					request.setAttribute("sps", sps);
 				}
 						
@@ -192,8 +176,23 @@ public class SPController extends HttpServlet {
 		}
 		
 		if(type.equalsIgnoreCase("RecMMS") || type.equalsIgnoreCase("RecSMS")){
+			int operador = Integer.parseInt(request.getParameter("selectOperador"));
+			int la = Integer.parseInt(request.getParameter("la"));
+			String servicio = request.getParameter("servicio");
+			Double precio = Double.parseDouble(request.getParameter("precio"));
 			
+			TipoRec tr;
+			if(type.substring(3).equals("MMS"))
+				tr = TipoRec.MMS;
+			else
+				tr = TipoRec.SMS;
+			
+			RecServicePriceDTO sp = new RecServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+			
+			//TODO: Insert via cache o dao?
 		}
+		
+		//TODO: Otros tipos
 		
 		RequestDispatcher view = request.getRequestDispatcher(ERROR_PAGE);
 		view.forward(request, response);

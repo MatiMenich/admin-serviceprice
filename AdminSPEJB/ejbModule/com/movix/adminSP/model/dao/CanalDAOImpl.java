@@ -12,20 +12,6 @@ public class CanalDAOImpl implements CanalDAO {
 
 
 	@Override
-	public List<CanalDTO> findByOperador(Operador operador) {
-		List<CanalDTO> canales = this.findAll();
-		List<CanalDTO> opChannels = new ArrayList<CanalDTO>();
-		
-		for(CanalDTO canal : canales){
-			if(canal.getOperador().getIdBD()==operador.getIdBD()){
-				opChannels.add(canal);
-			}
-		}
-		
-		return opChannels;
-	}
-
-	@Override
 	public List<CanalDTO> findAll() {
 		
 		List<OperatorRate> opRates = PrioritiesClient.getInstance().getOperatorRates();

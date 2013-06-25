@@ -10,36 +10,150 @@
 	
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 	
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.validate.js"></script>
 	<script>
 	$(document).ready(function() {
-		 $("#tipoSP").change(function(){
-             if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
-             	$("#canal-div").slideUp();
-                 $("#cache-div").slideUp();
-                 $("#estrategia-div").slideUp();
-                 $("#args-div").slideUp();
-                 $("#la-div").slideDown();
-                 $("#sp-div").slideDown();
-             }
-             else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
-             	$("#la-div").slideUp();
-             	$("#canal-div").slideDown();
-             	$("#sp-div").slideDown();
-             	$("#estrategia-div").slideDown();
-             	$("#cache-div").slideDown();
-             }
-             else{
-             	 $("#la-div").slideUp();
-                  $("#sp-div").slideUp();
-                  $("#canal-div").slideUp();
-                  $("#cache-div").slideUp();
-                  $("#estrategia-div").slideUp();
-                  $("#args-div").slideUp();
-             }
-             
-             parent.$.fancybox.update();	
-     });
+		
+		$.validator.addMethod('positiveNumber',
+			    function (value) { 
+			        return Number(value) > 0;
+			    }, 'Ingrese un número positivo.');
+		
+		
+		 var RecRules = {
+				 
+				 	servicio: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un servicio",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    },
+	        	    
+	        	    la: {
+	        	        required: true,
+	        	        number: true,
+	        	        positiveNumber: true,
+	        	        messages: {
+	        	        	required: "Ingrese un LA",
+	        	            number: "Ingrese un número válido"
+	        	        }
+	        	    },
+	        	    
+	        	    precio: {
+	        	    	required:true,
+	        	    	number: true,
+	        	    	positiveNumber: true,
+	        	    	messages: {
+	        	        	required: "Ingrese un precio",
+	        	            number: "Ingrese un número válido"
+	        	    	}
+	        	    }
+	        };
+		 
+		 var EnvRules = {
+				 
+				 	servicio: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un servicio",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    },
+	        	    
+	        	     precio: {
+	        	    	required:true,
+	        	    	number: true,
+	        	    	positiveNumber: true,
+	        	    	messages: {
+	        	        	required: "Ingrese un precio",
+	        	            number: "Ingrese un número válido"
+	        	    	}
+	        	    },
+	        	    
+	        	    canal: {
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese un canal",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	        	    }
+	        };
+		 
+		 
+		 function addRules(rulesObj){
+	            for (var item in rulesObj){
+	               $('#'+item).rules('add',rulesObj[item]);  
+	            } 
+	        }
+
+	        function removeRules(rulesObj){
+	            for (var item in rulesObj){
+	               $('#'+item).rules('remove');  
+	            } 
+	        }
+		
+	        $('#SPform').validate({
+	            submitHandler: function(){
+	              alert('submit was successful'); 
+	            },
+	        	errorPlacement: function(error, element) {
+		           error.insertAfter(element);
+		           parent.$.fancybox.update(); 
+	        	}
+	        });
+		
+	        $("#tipoSP").change(function(){
+	        	
+	        	
+                if($(this).val() == "RecSMS" || $(this).val() == "RecMMS"){
+                	$("#canal-div").hide();
+                    $("#cache-div").hide();
+                    $("#estrategia-div").hide();
+                    $("#args-div").hide();
+                    $("#la-div").show();
+                    $("#sp-div").show();
+                    removeRules(EnvRules);
+                    addRules(RecRules);
+                }
+                else if($(this).val() == "EnvSMS" || $(this).val() == "EnvMMS" || $(this).val() == "EnvVSMS" || $(this).val() == "Bill"){
+                	$("#la-div").hide();
+                	$("#canal-div").show();
+                	$("#sp-div").show();
+                	$("#estrategia-div").show();
+                	$("#cache-div").show();
+                	removeRules(RecRules);
+                    addRules(EnvRules);
+                }
+                else{
+                	 $("#la-div").hide();
+                     $("#sp-div").hide();
+                     $("#canal-div").hide();
+                     $("#cache-div").hide();
+                     $("#estrategia-div").hide();
+                     $("#args-div").hide();
+                }
+                
+               
+               
+
+                $('#SPform').validate({
+    	            submitHandler: function(){
+    	              alert('submit was successful'); 
+    	            },
+    	        	errorPlacement: function(error, element) {
+    		           error.insertAfter(element);
+    		           parent.$.fancybox.update(); 
+    	        	}
+    	        });
+               
+                parent.$.fancybox.update();	
+               
+        });
 		 
 		
 		
@@ -47,15 +161,21 @@
         	$("#canal-div").hide();
             $("#cache-div").hide();
             $("#estrategia-div").hide();
+            $("#args-div").hide();
+            removeRules(EnvRules);
+            addRules(RecRules);
         }
         else if($("#tipoSP").val() == "EnvSMS" || $("#tipoSP").val() == "EnvMMS" || $("#tipoSP").val() == "EnvVSMS" || $("#tipoSP").val() == "Bill"){
         	$("#la-div").hide();
+        	removeRules(RecRules);
+            addRules(EnvRules);
         }
         else{
      	  	$("#la-div").hide();
             $("#sp-div").hide();
             $("#canal-div").hide();
             $("#estrategia-div").hide();
+            $("#args-div").hide();
             $("#cache-div").hide();
         }
         
@@ -72,8 +192,8 @@
            	});	
          });
             
-   		if($("#tipoEstrategia").val() == "fp" || $("#tipoEstrategia").val() == "asc" || $("#tipoEstrategia").val() == "dsc"){
-   			//Hacer algo
+   		if($("#tipoEstrategia").val() == "fp" || $("#tipoEstrategia").val() == "asc" || $("#tipoEstrategia").val() == "dsc" || $("#tipoEstrategia") == "fin"){
+   			$("#args-div").show();
    		}
    		else{
    			$("#args-div").hide();
@@ -136,7 +256,7 @@
 					      <option  value="EnvSMS" ${sp.getTipo()=="Envio" && sp.getTipoEnv().toString()=="SMSWP" ? 'selected' : "" }>Envío SMS/WP</option>
 					      <option  value="EnvMMS" ${sp.getTipo()=="Envio" && sp.getTipoEnv().toString()=="MMS" ? 'selected' : "" }>Envío MMS</option>
 					      <option  value="EnvVSMS" ${sp.getTipo()=="Envio" && sp.getTipoEnv().toString()=="VSMS" ? 'selected' : "" }>Envío VSMS</option>
-					      <option  value="Bill">Billing</option>
+					      <option  value="Bill" ${sp.getTipo()=="Billing" ? 'selected' : "" }>Billing</option>
 					    </select>
 					  </div>
 					</div>
@@ -190,10 +310,14 @@
 							<div class="span12">
 								<select id="tipoEstrategia" name="tipoEstrategia" class="input-xlarge">
 							      <option>Seleccione Estrategia...</option>
-							      <option  value="fp" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FULLPRICE" ? 'selected' : "" }>Full Price</option>
-							      <option  value="asc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="ASCENDENTE" ? 'selected' : "" }>Ascendente </option>
-							      <option  value="dsc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="DESCENDENTE" ? 'selected' : "" }>Descendente</option>
-							      <option  value="fin" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FINANCE" ? 'selected' : "" }>Finance</option>
+							      <option  value="fp" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FULLPRICE" ? 'selected' : 
+														sp.getTipo()=="Billing" && sp.getEstrategia().toString()=="FULLPRICE" ? 'selected' : ""}>Full Price</option>
+							      <option  value="asc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="ASCENDENTE" ? 'selected' : 
+							      						 sp.getTipo()=="Billing" && sp.getEstrategia().toString()=="ASCENDENTE" ? 'selected' : ""}>Ascendente </option>
+							      <option  value="dsc" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="DESCENDENTE" ? 'selected' : 
+														 sp.getTipo()=="Billing" && sp.getEstrategia().toString()=="DESCENDENTE" ? 'selected' : "" }>Descendente</option>
+							      <option  value="fin" ${sp.getTipo()=="Envio" && sp.getEstrategia().toString()=="FINANCE" ? 'selected' : 
+														 sp.getTipo()=="Billing" && sp.getEstrategia().toString()=="FINANCE" ? 'selected' : "" }>Finance</option>
 							    </select>
 							</div>
 						</div>
@@ -227,9 +351,9 @@
 				
 				<!-- Textarea -->
 				<div class="control-group">
-				  <label class="control-label" for="textarea">Comentario:</label>
+				  <label class="control-label" for="comment">Comentario:</label>
 				  <div class="controls">                     
-				    		<textarea id="text" name="text" placeholder="Ingrese un comentario..."></textarea>
+				    		<textarea id="comment" name="comment" placeholder="Ingrese un comentario..."></textarea>
 				  </div>
 				</div>
 
@@ -237,7 +361,7 @@
 
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary">Editar SP</button>
-					<button type="button" class="btn">Cancelar</button>
+					<button type="button" class="btn btn-danger">Cancelar</button>
 				</div>
 			</fieldset>
 		</form>

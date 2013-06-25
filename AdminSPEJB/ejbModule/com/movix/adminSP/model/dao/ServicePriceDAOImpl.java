@@ -161,27 +161,34 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 					tipoRec=TipoRec.MMS;
 				
 				sps.add(new RecServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()),tipoRec,servicePrice[0],
-												Double.parseDouble(servicePrice[1]),Integer.parseInt(spEntry.getService())));
+												Double.parseDouble(servicePrice[1]),
+												Integer.parseInt(spEntry.getService())));
 				
 			}
 			
 			if(spEntry.getType().equals("bill")){
 				
 				Estrategia estrategia;
-				if(spEntry.getStrategy().equals("ASCENDENTE"))
-					estrategia= Estrategia.ASCENDENTE;
-				if(spEntry.getStrategy().equals("DESCENDENTE"))
-					estrategia= Estrategia.DESCENDENTE;
-				if(spEntry.getStrategy().equals("FINANCE"))
-					estrategia= Estrategia.FINANCE;
-				if(spEntry.getStrategy().equals("FULLPRICE"))
-					estrategia= Estrategia.FULLPRICE;
+				if(spEntry.getStrategy()!=null){
+					if(spEntry.getStrategy().equals("ASCENDENTE"))
+						estrategia= Estrategia.ASCENDENTE;
+					if(spEntry.getStrategy().equals("DESCENDENTE"))
+						estrategia= Estrategia.DESCENDENTE;
+					if(spEntry.getStrategy().equals("FINANCE"))
+						estrategia= Estrategia.FINANCE;
+					if(spEntry.getStrategy().equals("FULLPRICE"))
+						estrategia= Estrategia.FULLPRICE;
+					else
+						estrategia= Estrategia.FULLPRICE;
+				}
 				else
 					estrategia= Estrategia.FULLPRICE;
 				
+				String price = spEntry.getPrice();
+				price = price.replaceAll(",",".");
 				
 				sps.add(new BillServicePriceDTO(spEntry.hashCode(), Operador.getOperadorPorIdBD(spEntry.getOperator_id()),spEntry.getService(),
-												Double.parseDouble(spEntry.getPrice()),estrategia,spEntry.getChannel(),
+												Double.parseDouble(price),estrategia,spEntry.getChannel(),
 												spEntry.getArgs(),spEntry.isCache()));
 				
 			}
@@ -189,16 +196,23 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 			if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms")||spEntry.getType().equals("mms")||spEntry.getType().equals("vsms")){
 				
 				Estrategia estrategia;
-				if(spEntry.getStrategy().equals("ASCENDENTE"))
-					estrategia= Estrategia.ASCENDENTE;
-				if(spEntry.getStrategy().equals("DESCENDENTE"))
-					estrategia= Estrategia.DESCENDENTE;
-				if(spEntry.getStrategy().equals("FINANCE"))
-					estrategia= Estrategia.FINANCE;
-				if(spEntry.getStrategy().equals("FULLPRICE"))
-					estrategia= Estrategia.FULLPRICE;
+				if(spEntry.getStrategy()!=null){
+					if(spEntry.getStrategy().equals("ASCENDENTE"))
+						estrategia= Estrategia.ASCENDENTE;
+					if(spEntry.getStrategy().equals("DESCENDENTE"))
+						estrategia= Estrategia.DESCENDENTE;
+					if(spEntry.getStrategy().equals("FINANCE"))
+						estrategia= Estrategia.FINANCE;
+					if(spEntry.getStrategy().equals("FULLPRICE"))
+						estrategia= Estrategia.FULLPRICE;
+					else
+						estrategia= Estrategia.FULLPRICE;
+				}
 				else
 					estrategia= Estrategia.FULLPRICE;
+				
+				String price = spEntry.getPrice();
+				price = price.replaceAll(",",".");
 				
 				TipoEnv tipoEnv;
 				if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms"))
@@ -209,7 +223,7 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 					tipoEnv = TipoEnv.MMS;
 				
 				sps.add(new EnvServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()), tipoEnv,spEntry.getService(),
-												Double.parseDouble(spEntry.getPrice()),estrategia,
+												Double.parseDouble(price),estrategia,
 												spEntry.getChannel(),spEntry.getArgs(),spEntry.isCache()));
 				
 			}

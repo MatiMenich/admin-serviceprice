@@ -16,6 +16,8 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
+	<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	
 	<!-- FancyBox -->
 	<script type="text/javascript" src="fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
 	<link rel="stylesheet" href="fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
@@ -59,6 +61,9 @@
 			$('#search-box').keyup(function() {
 				oTable.fnFilter( $(this).val() );
 			});
+			
+			$("[rel=tooltip]").tooltip({ placement: 'right'});
+			
 		} );
 		
 	</script>
@@ -121,9 +126,9 @@
         </form>
         
         <div class="pull-right">
-       		<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-refresh icon-white"></i> </a>
+       		<a class="btn btn-inverse" href="#"> <i class="icon-refresh icon-white"></i> </a>
         	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo Servicio Precio </a>
-        	<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
+        	<a class="btn btn-inverse" href="#"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
 		</div>
         
     </div>
@@ -147,7 +152,9 @@
 		<c:forEach var="sp" items="${sps}">
 		
 		<tr class="odd_gradeA">
-		<td class="center" width="1">${sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle">' : sp.getEstado().toString()=="TESTING" ? '<img src="images/test.jpg" width="15" height="15" class="img-circle">' : '<img src="images/active.jpg" width="15" height="15" class="img-circle">'}</td>
+		<td class="center" width="1">${sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Inactivo" id="inactivo">' : 
+										sp.getEstado().toString()=="TESTING" ? '<img src="images/test.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="En prueba" id="testing">' : 
+										'<img src="images/active.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Activo" id="activo">'}</td>
         <td>${sp.getOperador().toString() }</td>
         <td>${sp.getServicio()}</td>
         <td>${sp.getPrecio() }</td>

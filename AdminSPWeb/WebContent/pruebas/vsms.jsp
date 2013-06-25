@@ -7,12 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Probar VSMS</title>
 	
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/site.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/pygments.css">
-	<link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
-	
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="js/jquery.js"></script>
 	
 	<style type="text/css">	body{background-color : #f9f9f9;}</style>
 </head>
@@ -50,13 +46,9 @@
   </div>
 </div>
 
-<!-- Button (Double) -->
-<div class="control-group">
-  <label class="control-label" for="probar"></label>
-  <div class="controls">
+<div class="form-actions">
     <button id="probar" name="probar" class="btn btn-primary">Probar SP</button>
     <button id="canclear" name="canclear" class="btn btn-danger">Cancelar</button>
-  </div>
 </div>
 
 </fieldset>

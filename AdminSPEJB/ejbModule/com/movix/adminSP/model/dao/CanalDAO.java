@@ -8,7 +8,5 @@ import com.movix.shared.Operador;
 public interface CanalDAO {
 
 	public List<CanalDTO> findAll();
-
-	List<CanalDTO> findByOperador(Operador operador);
 	
 }

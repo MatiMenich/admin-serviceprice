@@ -72,15 +72,6 @@
 	        	        	required: "Ingrese un precio",
 	        	            number: "Ingrese un número válido"
 	        	    	}
-	        	    },
-	        	    
-	        	    canal: {
-	        	        required: true,
-	        	        minlength: 2,
-	        	        messages: {
-	        	            required: "Ingrese un canal",
-	        	            minlength: "Largo mayor que 2"
-	        	        }
 	        	    }
 	        };
 	        
@@ -156,7 +147,7 @@
         });
         
         
-        //TODO: comportameinto default = Desplegar argumentos
+    
         $("#tipoEstrategia").change(function(){
         	
         	
@@ -164,15 +155,32 @@
         	if($(this).val() == "fp" || $(this).val() == "fin"){
         		$("#args-div").show();
         		$("#sps-div").hide();
+        		$('#args').rules('add',{
+        	        required: true,
+        	        minlength: 2,
+        	        messages: {
+        	            required: "Ingrese argumentos",
+        	            minlength: "Largo mayor que 2"
+        	        }
+                });
         	}
         	else if($(this).val() == "asc" || $(this).val() == "dsc"){
         		$("#args-div").hide();
         		$("#sps-div").show();
+        		$("#args").rules('remove');
         	}
         	
         	else{
         		$("#args-div").show();
         		$("#sps-div").hide();
+        		$('#args').rules('add',{
+        	        required: true,
+        	        minlength: 2,
+        	        messages: {
+        	            required: "Ingrese argumentos",
+        	            minlength: "Largo mayor que 2"
+        	        }
+                });
         	}
         	
         	   
@@ -195,7 +203,7 @@
             var fName = $("<input type=\"text\" id='newSP"+i+"' />");
             var removeButton = $(' <a class="remove btn btn-danger" href="#"><i class="icon-remove icon-white"></i></a>');
             removeButton.click(function() {
-                $(this).parent().remove();
+            	$(this).parent().remove();
                 $(this).parent().rules('remove');
                 i--;
             });
@@ -229,6 +237,16 @@
         });
         
        
+       $('#selectOperador').change ( function() {
+                $.ajax({
+                    type: "GET",
+                    url: "DropCanales",
+                    data: {opValue:  $('#selectOperador').val() },
+                    success: function(data){
+                        $("#canal").html(data);
+                    }
+                });
+        });
        
         
         
@@ -255,7 +273,7 @@
 					<div class="controls">
 						  <select id="selectOperador" name="selectOperador" class="input-xlarge">
 							  	<c:forEach var="op" items="${opList}">
-							  		<option value="${op.toString() }">${op.toString() }</option>
+							  		<option value="${op.getIdBD() }">${op.toString() }</option>
 						  		</c:forEach>
 						  </select>
 					</div>
@@ -293,11 +311,9 @@
 				<div id="canal-div" class="control-group">
 					<label class="control-label">Canal:</label>
 					<div class="controls">
-						<div class="row-fluid">
-							<div class="span10">
-								<input id="canal" name="canal" type="text" class="input-block-level" >
-							</div>
-						</div>
+							<select id="canal" name="canal" class="input-xlarge" >
+							</select>
+							
 					</div>
 				</div>
 				 
@@ -377,7 +393,7 @@
 
 				<div class="form-actions">
 					<button type="submit" class="btn btn-primary">Crear SP</button>
-					<button type="button" class="btn">Cancelar</button>
+					<button type="button" class="btn btn-danger">Cancelar</button>
 				</div>
 			</fieldset>
 		</form>

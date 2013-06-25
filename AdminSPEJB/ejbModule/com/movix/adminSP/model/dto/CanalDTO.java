@@ -1,27 +1,25 @@
 package com.movix.adminSP.model.dto;
 
-import com.movix.shared.Operador;
-
 public class CanalDTO {
 	
 	private String nombre;
-	private Operador operador;
+	private int idOperador;
 	
 	public CanalDTO(){
 		
 	}
 	
-	public CanalDTO(String nombre, int operador){
+	public CanalDTO(String nombre, int idOperador){
 		this.nombre=nombre;
-		this.operador = Operador.getOperadorPorIdBD(operador);
+		this.idOperador = idOperador;
 	}
 
 	public String getNombre() {
-		return nombre;
+		return this.nombre;
 	}
 
-	public Operador getOperador() {
-		return operador;
+	public int getIdOperador() {
+		return this.idOperador;
 	}
 
 

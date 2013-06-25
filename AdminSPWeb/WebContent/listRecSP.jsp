@@ -14,11 +14,13 @@
 	<link href="css/demo_table.css" rel="stylesheet" type="text/css" />      
 	<link href="css/demo_table_jui.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="css/DT_bootstrap.css">
+	
 	<!-- Scripts -->
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/dataTables.bootstrap.js" type="text/javascript"></script>
 	<script src="js/jquery.dataTables.columnFilter.js" type="text/javascript"></script>
+	<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 	
 	
 	<!-- FancyBox -->
@@ -34,13 +36,13 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "5%" , "bSortable" : false},  
+					{ "sWidth": "5%" , "sClass": "center", "bSortable" : false},  
 					{ "sWidth": "30%" }, 
 					{ "sWidth": "15%" }, 
 					{ "sWidth": "15%"},
 					{ "sWidth": "15%"},
 					{ "sWidth": "10%"},
-					{ "sWidth": "10%" , "bSortable" : false}
+					{ "sWidth": "10%" , "sClass": "center" ,"bSortable" : false}
 				]
 			}).columnFilter({
 				aoColumns:[
@@ -58,7 +60,7 @@
 				maxWidth	: 600,
 				fitToView	: true,
 				width		: '70%',
-				height		: '70%',
+				height		: '100%',
 				padding		: 20,
 				autoSize	: true,
 				closeClick	: true,
@@ -73,6 +75,8 @@
 			$('#search-box').keyup(function() {
 				oTable.fnFilter( $(this).val() );
 			});
+			
+			$("[rel=tooltip]").tooltip({ placement: 'right'});
 			
 		} );
 		
@@ -137,9 +141,9 @@
         
         
        	<div class="pull-right">
-       		<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-refresh icon-white"></i> </a>
+       		<a class="btn btn-inverse" data-loading-text="Loading..." href="#"> <i class="icon-refresh icon-white"></i> </a>
         	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo Servicio Precio </a>
-        	<a class="btn btn-inverse fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
+        	<a class="btn btn-inverse" href="#"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
 		</div>
 		
         
@@ -179,7 +183,8 @@
 		<c:forEach var="sp" items="${sps}">
 		
 		<tr class="odd_gradeA">
-		<td class="center" width="1">${sp.getEstado().toString()=="TESTING" || sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle">' :  '<img src="images/active.jpg" width="15" height="15" class="img-circle">'}</td>
+		<td class="center" width="1">${sp.getEstado().toString()=="TESTING" || sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Inactivo" id="inactivo">' :  
+										'<img src="images/active.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Activo" id="activo">'}</td>
         <td>${sp.getOperador().toString() }</td>
         <td>${sp.getTipoRec()}</td>
         <td>${sp.getLA() }</td>
