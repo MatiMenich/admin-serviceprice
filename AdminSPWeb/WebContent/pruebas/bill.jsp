@@ -22,7 +22,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="nmovil">Ingrese N° Móvil:</label>
+  <label class="control-label" for="nmovil">N° Móvil:</label>
   <div class="controls">
     <input id="nmovil" name="nmovil" type="text" placeholder="ej: 99988777" class="input-xlarge" required="">
     
@@ -30,7 +30,7 @@
 </div>
 
 <div class="form-actions">
-    <button id="probar" name="probar" class="btn btn-primary">Probar SP</button>
+    <button id="probar" name="probar" class="btn btn-primary">Probar</button>
     <button id="canclear" name="canclear" class="btn btn-danger">Cancelar</button>
 </div>
 

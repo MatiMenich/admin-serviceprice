@@ -15,10 +15,15 @@
 	<script>
 	$(document).ready(function() {
 		
-		$.validator.addMethod('positiveNumber',
-			    function (value) { 
-			        return Number(value) > 0;
-			    }, 'Ingrese un número positivo.');
+		$.validator.addMethod('validPrice',
+			    function (value,element) { 
+			        return this.optional(element) || /^[X0-9]{1,8}$/i.test(value); 
+		}, "Por favor ingrese un precio válido.");
+		
+		$.validator.addMethod('validLA',
+			    function (value,element) { 
+			        return this.optional(element) || /^[a-zA-Z0-9.]{2,8}$/i.test(value); 
+		}, "Por favor ingrese un LA válido.");
 		
 		
 		 var RecRules = {
@@ -35,20 +40,20 @@
 	        	    la: {
 	        	        required: true,
 	        	        number: true,
-	        	        positiveNumber: true,
+	        	        validLA: true,
 	        	        messages: {
 	        	        	required: "Ingrese un LA",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un LA válido"
 	        	        }
 	        	    },
 	        	    
 	        	    precio: {
 	        	    	required:true,
 	        	    	number: true,
-	        	    	positiveNumber: true,
+	        	    	validPrice: true,
 	        	    	messages: {
 	        	        	required: "Ingrese un precio",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un precio válido"
 	        	    	}
 	        	    }
 	        };
@@ -67,20 +72,18 @@
 	        	     precio: {
 	        	    	required:true,
 	        	    	number: true,
-	        	    	positiveNumber: true,
+	        	    	validPrice: true,
 	        	    	messages: {
 	        	        	required: "Ingrese un precio",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un precio válido"
 	        	    	}
 	        	    },
 	        	    
 	        	    canal: {
-	        	        required: true,
-	        	        minlength: 2,
-	        	        messages: {
-	        	            required: "Ingrese un canal",
-	        	            minlength: "Largo mayor que 2"
-	        	        }
+	        	    	required:true,
+	        	    	messages: {
+	        	    		required: "Ingrese un canal"
+	        	    	}
 	        	    }
 	        };
 		 
@@ -214,6 +217,7 @@
 			<fieldset>
 				<legend>Editar Servicio Precio</legend>
 
+				<input type="hidden" id="idSP" name="idSP" value="${sp.getId() }">
 
 				<!-- Multiple Radios (inline) -->
 				<div class="control-group">
@@ -224,7 +228,7 @@
 				      Inactivo
 				    </label>
 				    <label class="radio inline" for="radios-1">
-				      <input type="radio" name="radios" id="radios-1" value="2" ${sp.getEstado().toString()=='TESTING' ? 'checked="checked"' : "" }>
+				      <input type="radio" name="radios" id="radios-1" value="2" ${sp.getEstado().toString()=='TESTING' ? 'checked="checked"' : "" } disabled>
 				      Testing
 				    </label>
 				    <label class="radio inline" for="radios-2">
@@ -239,7 +243,7 @@
 					<div class="controls">
 						  <select id="selectOperador" name="selectOperador" class="input-xlarge">
 						      	<c:forEach var="op" items="${opList}">
-							  		<option value='${op.getIdBD()}' ${sp.getOperador().toString() == op.toString() ? 'selected' : "" }>${op.toString() }</option>
+							  		<option value='${op.getIdBD()}' ${sp.getOperador().toString() == op.toString() ? 'selected' : "" }>${op.getPais().getCodigo().toUpperCase()} ${op.name().split("_")[0].substring(0,1).toUpperCase().concat(op.name().split("_")[0].substring(1).toLowerCase())}</option>
 						  		</c:forEach>
 						  </select>
 					</div>
@@ -267,7 +271,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span3">
-								<input id="la" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Recepcion" ? sp.getLA() : ""}' >
+								<input id="la" name="la" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Recepcion" ? sp.getLA() : ""}' >
 							</div>
 						</div>
 					</div>
@@ -280,7 +284,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span10">
-								<input id="canal" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Envio"||sp.getTipo()=="Billing" ? sp.getCanal() : "" }' >
+								<input id="canal" name="canal" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Envio"||sp.getTipo()=="Billing" ? sp.getCanal() : "" }' >
 							</div>
 						</div>
 					</div>
@@ -294,10 +298,10 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span9">
-								<input id="servicio" type="text" class="input-block-level" autocomplete="off" value='${sp.getServicio()}'>
+								<input id="servicio" name="servicio" type="text" class="input-block-level" autocomplete="off" value='${sp.getServicio()}'>
 							</div>
 							<div class="span3">
-								<input id="precio" type="text" class="input-block-level" autocomplete="off"   value='${sp.getPrecio() }'>
+								<input id="precio" name="precio" type="text" class="input-block-level" autocomplete="off"   value='${sp.getPrecio() }'>
 							</div>
 						</div>
 					</div>
@@ -330,7 +334,7 @@
 					<div class="controls">
 						<div class="row-fluid">
 							<div class="span12">
-								<input id="args" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Envio" || sp.getTipo()=="Billing" ? sp.getArgs() : "" }' >
+								<input id="args" name="args" type="text" class="input-block-level" autocomplete="off" value='${sp.getTipo()=="Envio" || sp.getTipo()=="Billing" ? sp.getArgs() : "" }' >
 							</div>
 						</div>
 					</div>
@@ -343,7 +347,7 @@
 					<label class="control-label">Cache</label>
 					<div class="controls">
 						<div class="row-fluid">
-							 <input type="checkbox" name="checkboxes" id="checkboxes-0" value="Option one" ${sp.getTipo()=="Envio" || sp.getTipo()=="Billing" ? (sp.hasCache() ?  'checked' : "") : ""}>
+							 <input type="checkbox" name="cache" id="cache" value="hasCache">
 						</div>
 					</div>
 				</div>
@@ -360,8 +364,8 @@
 				
 
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Editar SP</button>
-					<button type="button" class="btn btn-danger">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Editar</button>
+					<button type="button" class="btn btn-danger" onclick="parent.$.fancybox.close()">Cancelar</button>
 				</div>
 			</fieldset>
 		</form>

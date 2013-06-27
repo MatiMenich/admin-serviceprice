@@ -2,6 +2,7 @@ package com.movix.adminSP.web.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,10 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.movix.adminSP.cache.CanalCache;
-import com.movix.adminSP.model.dao.CanalDAO;
-import com.movix.adminSP.model.dao.CanalDAOFactory;
+import com.movix.adminSP.model.comparators.CanalComparator;
 import com.movix.adminSP.model.dto.CanalDTO;
-import com.movix.shared.Operador;
 
 /**
  * Servlet implementation class DropCanales
@@ -47,10 +46,17 @@ public class DropCanales extends HttpServlet {
 			 
 			 List<CanalDTO> canales = cacheCanal.getByOperador(operador);
 			 
-			 for(CanalDTO canal : canales){
-				 out.print("<option value='"+canal.getNombre()+"'>"+canal.getNombre()+"</option>");
-				 System.out.println("<option value='"+canal.getNombre()+"'>"+canal.getNombre()+"</option>");
+			 
+			 if(canales!=null){		 
+				 Collections.sort(canales, new CanalComparator());
+				 for(CanalDTO canal : canales){
+					 out.print("<option value='"+canal.getNombre()+"'>"+canal.getNombre()+"</option>");
+				 }
 			 }
+			 else{
+				 out.print("<option value='null'> Operador no posee canales!</option>");
+			 }
+				 
 			 
 		 }
 		 catch (Exception e){

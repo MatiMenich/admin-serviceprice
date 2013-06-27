@@ -2,6 +2,7 @@ package com.movix.adminSP.web.ajax;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.movix.adminSP.cache.SPCache;
-import com.movix.adminSP.model.dto.CanalDTO;
+import com.movix.adminSP.model.comparators.SPComparator;
 import com.movix.adminSP.model.dto.ServicePriceDTO;
 import com.movix.shared.Operador;
 
@@ -43,11 +44,14 @@ public class DropSPs extends HttpServlet {
 			 
 			 List<ServicePriceDTO> sps = cacheSP.getSPByOperador(Operador.getOperadorPorIdBD(operador));
 			 
-			 for(ServicePriceDTO sp : sps){
-				 out.print("<option value='"+sp.getId()+"'>"+sp.getServicio()+"/"+sp.getPrecio()+"</option>");
-				 System.out.println("<option value='"+sp.getId()+"'>"+sp.getServicio()+"/"+sp.getPrecio()+"</option>");
+			 if(sps!=null){
+				 Collections.sort(sps, new SPComparator());
+				 for(ServicePriceDTO sp : sps){
+					 out.print("<option value='"+sp.getId()+"'>"+sp.getServicio()+"/"+sp.getPrecio()+"</option>");
+				 }
+			 }else{
+				 out.print("Operador no posee SP!");
 			 }
-			 
 		 }
 		 catch (Exception e){
 			 e.printStackTrace();

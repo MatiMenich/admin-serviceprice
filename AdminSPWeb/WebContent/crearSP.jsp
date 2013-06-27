@@ -15,10 +15,15 @@
 	<script>
 	$(document).ready(function() {
 		
-		$.validator.addMethod('positiveNumber',
-			    function (value) { 
-			        return Number(value) > 0;
-			    }, 'Ingrese un número positivo.');
+		$.validator.addMethod('validPrice',
+			    function (value,element) { 
+			        return this.optional(element) || /^[X0-9.]{1,8}$/i.test(value); 
+		}, "Por favor ingrese un precio válido.");
+		
+		$.validator.addMethod('validLA',
+			    function (value,element) { 
+			        return this.optional(element) || /^[a-zA-Z0-9.]{2,8}$/i.test(value); 
+		}, "Por favor ingrese un LA válido.");
 		
 		
 		 var RecRules = {
@@ -34,21 +39,19 @@
 	        	    
 	        	    la: {
 	        	        required: true,
-	        	        number: true,
-	        	        positiveNumber: true,
+	        	        validLA: true,
 	        	        messages: {
 	        	        	required: "Ingrese un LA",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un LA válido"
 	        	        }
 	        	    },
 	        	    
 	        	    precio: {
 	        	    	required:true,
-	        	    	number: true,
-	        	    	positiveNumber: true,
+	        	    	validPrice: true,
 	        	    	messages: {
 	        	        	required: "Ingrese un precio",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un precio válido"
 	        	    	}
 	        	    }
 	        };
@@ -66,11 +69,17 @@
 	        	    
 	        	     precio: {
 	        	    	required:true,
-	        	    	number: true,
-	        	    	positiveNumber: true,
+	        	    	validPrice: true,
 	        	    	messages: {
 	        	        	required: "Ingrese un precio",
-	        	            number: "Ingrese un número válido"
+	        	            number: "Ingrese un precio válido"
+	        	    	}
+	        	    },
+	        	    
+	        	    canal: {
+	        	    	required:true,
+	        	    	messages: {
+	        	    		required: "Ingrese un canal"
 	        	    	}
 	        	    }
 	        };
@@ -88,9 +97,6 @@
 	        }
 		
 	        $('#SPform').validate({
-	            submitHandler: function(){
-	              alert('submit was successful'); 
-	            },
 	        	errorPlacement: function(error, element) {
 		           error.insertAfter(element);
 		           parent.$.fancybox.update(); 
@@ -133,9 +139,6 @@
                
 
                 $('#SPform').validate({
-    	            submitHandler: function(){
-    	              alert('submit was successful'); 
-    	            },
     	        	errorPlacement: function(error, element) {
     		           error.insertAfter(element);
     		           parent.$.fancybox.update(); 
@@ -155,14 +158,16 @@
         	if($(this).val() == "fp" || $(this).val() == "fin"){
         		$("#args-div").show();
         		$("#sps-div").hide();
-        		$('#args').rules('add',{
-        	        required: true,
-        	        minlength: 2,
-        	        messages: {
-        	            required: "Ingrese argumentos",
-        	            minlength: "Largo mayor que 2"
-        	        }
-                });
+        		if($("#tipoEstrategia").val() =="Bill"){
+	        		$('#args').rules('add',{
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese argumentos",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	                });
+        		}
         	}
         	else if($(this).val() == "asc" || $(this).val() == "dsc"){
         		$("#args-div").hide();
@@ -173,14 +178,17 @@
         	else{
         		$("#args-div").show();
         		$("#sps-div").hide();
-        		$('#args').rules('add',{
-        	        required: true,
-        	        minlength: 2,
-        	        messages: {
-        	            required: "Ingrese argumentos",
-        	            minlength: "Largo mayor que 2"
-        	        }
-                });
+        		
+        		if($("#tipoEstrategia").val() =="Bill"){
+	        		$('#args').rules('add',{
+	        	        required: true,
+	        	        minlength: 2,
+	        	        messages: {
+	        	            required: "Ingrese argumentos",
+	        	            minlength: "Largo mayor que 2"
+	        	        }
+	                });
+        		}
         	}
         	
         	   
@@ -200,38 +208,32 @@
         
         $("#addSP").click(function() {
             var fieldWrapper = $("<div class=\"fieldwrapper\" id=\"field" + i + "\"/>");
-            var fName = $("<input type=\"text\" id='newSP"+i+"' />");
+            var fName = $("<select id='newSP' name='newSP' class='input-xlarge' ></select>");
             var removeButton = $(' <a class="remove btn btn-danger" href="#"><i class="icon-remove icon-white"></i></a>');
             removeButton.click(function() {
             	$(this).parent().remove();
                 $(this).parent().rules('remove');
                 i--;
             });
-            fieldWrapper.append(fName);
-            fieldWrapper.append(removeButton);
-            $("#addSPs").append(fieldWrapper);
+            
+            
+            $.ajax({
+                type: "GET",
+                url: "DropSPs",
+                data: {opValue:  $('#selectOperador').val() },
+                success: function(data){
+                	fName.html(data);
+                	fieldWrapper.append(fName);
+                    fieldWrapper.append(removeButton);
+                    $("#addSPs").append(fieldWrapper);
+                }
+            });
+           
+            
             parent.$.fancybox.update();
             
-            $('#newSP'+i).rules('add',{
-    	        required: true,
-    	        minlength: 2,
-    	        messages: {
-    	            required: "Ingrese un SP",
-    	            minlength: "Largo mayor que 2"
-    	        }
-            });
             
             i++;
-            
-            $('#SPform').validate({
-	            submitHandler: function(){
-	              alert('submit was successful'); 
-	            },
-	        	errorPlacement: function(error, element) {
-		           error.insertAfter(element);
-		           parent.$.fancybox.update(); 
-	        	}
-	        });
             
             
         });
@@ -273,7 +275,7 @@
 					<div class="controls">
 						  <select id="selectOperador" name="selectOperador" class="input-xlarge">
 							  	<c:forEach var="op" items="${opList}">
-							  		<option value="${op.getIdBD() }">${op.toString() }</option>
+							  		<option value="${op.getIdBD() }">${op.getPais().getCodigo().toUpperCase()} ${op.name().split("_")[0].substring(0,1).toUpperCase().concat(op.name().split("_")[0].substring(1).toLowerCase())}</option>
 						  		</c:forEach>
 						  </select>
 					</div>
@@ -289,6 +291,7 @@
 					      <option  value="RecMMS">Recepción MMS </option>
 					      <option  value="EnvSMS">Envío SMS/WP</option>
 					      <option  value="EnvMMS">Envío MMS</option>
+					      <option  value="EnvVSMS">Envío VSMS</option>
 					      <option  value="Bill">Billing</option>
 					    </select>
 					  </div>
@@ -392,8 +395,8 @@
 				
 
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary">Crear SP</button>
-					<button type="button" class="btn btn-danger">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Crear</button>
+					<button type="button" class="btn btn-danger" onclick="parent.$.fancybox.close()">Cancelar</button>
 				</div>
 			</fieldset>
 		</form>

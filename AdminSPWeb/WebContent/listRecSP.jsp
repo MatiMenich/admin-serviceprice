@@ -87,7 +87,7 @@
 	<style>
 	        .header{
 	            height:70px;
-	            background-color:#691760;
+	            background-color:#647687;
 	            color: white;
 	            font-size:55pt;
 	            padding:40px 0px 0px 30px;
@@ -95,7 +95,7 @@
 	
 	        .myFooter{
 	            height:20px;
-	            background-color:#691760;
+	            background-color:#647687;
 	            color: white;
 	            font-size:10pt;
 	            padding:5px;
@@ -134,16 +134,15 @@
             <li class="divider-vertical"></li>
 
         </ul>
-        <form class="navbar-search pull-right">
-            <input id="search-box" type="text"  class="search-query" placeholder="Search"/>
+        <div class="navbar-search pull-right" >
+            <input id="search-box" type="text"  class="search-query" placeholder="Buscar..."/>
             
-        </form>
+        </div>
         
         
        	<div class="pull-right">
-       		<a class="btn btn-inverse" data-loading-text="Loading..." href="#"> <i class="icon-refresh icon-white"></i> </a>
-        	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo Servicio Precio </a>
-        	<a class="btn btn-inverse" href="#"> <i class="icon-search icon-white"></i> Búsqueda Avanzada </a> 
+       		<a class="btn btn-inverse" data-loading-text="Loading..." href="SPController?type=Rec&action=refresh"> <i class="icon-refresh icon-white"></i> </a>
+        	<a class="btn btn-primary fancy" data-fancybox-type="iframe" href="SPController?action=add"> <i class="icon-plus icon-white"></i> Nuevo </a>
 		</div>
 		
         
@@ -185,16 +184,15 @@
 		<tr class="odd_gradeA">
 		<td class="center" width="1">${sp.getEstado().toString()=="TESTING" || sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Inactivo" id="inactivo">' :  
 										'<img src="images/active.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Activo" id="activo">'}</td>
-        <td>${sp.getOperador().toString() }</td>
+        <td><span class="label label-info">${sp.getOperador().getPais().getCodigo().toUpperCase()}</span> ${sp.getOperador().name().split("_")[0].substring(0,1).toUpperCase().concat(sp.getOperador().name().split("_")[0].substring(1).toLowerCase()) }</td>
         <td>${sp.getTipoRec()}</td>
         <td>${sp.getLA() }</td>
         <td>${sp.getServicio() }</td>
         <td>${sp.getPrecio() }</td>
         <td class="center">
         <div class="btn-group">
-        	<a class="btn" href="#"><i class="icon-time icon-large"></i></a> 
-        	<a class="btn fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> 
-        	<a class="btn btn-danger" href="#"><i class="icon-trash icon-white icon-large"></i></a>
+        	<a class="btn disabled" href="#"><i class="icon-time icon-large"></i></a> 
+        	<a class="btn btn-warning fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> 
         </div>
         </td>
         </tr>

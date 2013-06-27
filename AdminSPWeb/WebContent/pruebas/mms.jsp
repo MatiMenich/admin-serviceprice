@@ -73,7 +73,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="nmovil">Ingrese N° Móvil:</label>
+  <label class="control-label" for="nmovil">N° Móvil:</label>
   <div class="controls">
     <input id="nmovil" name="nmovil" type="text" placeholder="ej: 99988777" class="input-xlarge" required="">
     
@@ -82,7 +82,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="la">Ingrese LA:</label>
+  <label class="control-label" for="la">LA:</label>
   <div class="controls">
     <input id="la" name="la" type="text" placeholder="ej: 4433" class="input-xlarge" required="">
     
@@ -92,7 +92,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="url">Ingrese Asunto:</label>
+  <label class="control-label" for="url">Asunto:</label>
   <div class="controls">
     <input id="url" name="url" type="text" placeholder="ej: Imagen" class="input-xlarge">
     
@@ -103,7 +103,7 @@
 
 <div class="control-group">
 	
-	<label class="control-label" for="archivo">Ingrese Archivo:</label>
+	<label class="control-label" for="archivo">Archivo:</label>
 	<div class="controls">
 	  	<div class="upload">
 		    
@@ -115,7 +115,7 @@
 
 
 <div class="form-actions">
-    <button id="probar" name="probar" class="btn btn-primary">Probar SP</button>
+    <button id="probar" name="probar" class="btn btn-primary">Probar</button>
     <button id="canclear" name="canclear" class="btn btn-danger">Cancelar</button>
 </div>
 

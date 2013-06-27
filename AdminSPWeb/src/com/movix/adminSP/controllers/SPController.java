@@ -15,16 +15,18 @@ import javax.servlet.http.HttpServletResponse;
 import com.movix.adminSP.cache.SPCache;
 import com.movix.adminSP.model.dto.BillServicePriceDTO;
 import com.movix.adminSP.model.dto.EnvServicePriceDTO;
+import com.movix.adminSP.model.dto.EnvServicePriceDTO.TipoEnv;
 import com.movix.adminSP.model.dto.RecServicePriceDTO;
 import com.movix.adminSP.model.dto.RecServicePriceDTO.TipoRec;
 import com.movix.adminSP.model.dto.ServicePriceDTO;
+import com.movix.adminSP.model.dto.ServicePriceDTO.Estrategia;
 import com.movix.shared.Operador;
 
 /**
  * Servlet implementation class SPController
  */
 
-// TODO : probar cache
+
 @WebServlet("/SPController")
 public class SPController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +37,7 @@ public class SPController extends HttpServlet {
     private static String LIST_ENV_SP ="/listEnvSP.jsp";
     private static String LIST_REC_SP ="/listRecSP.jsp";
     private static String ERROR_PAGE = "/404.html";
+    private static String SUCCESS = "/success.jsp";
     
     public SPController() {
         super();
@@ -48,11 +51,13 @@ public class SPController extends HttpServlet {
 		String forward = "";
 		
 		
+		
+		//TODO: LDAP
 		//LDAPResponse ldapResponse = (LDAPResponse) request.getSession().getAttribute("ldapResponse");
 		//if(ldapResponse!=null&&ldapResponse.isTieneExito()){
 			if(action!=null){
 				if(action.equalsIgnoreCase("refresh")){
-					//cache.refreshCacheSP();
+					cacheSP.invalidateCacheSP();
 					
 				}
 				else if(action.equalsIgnoreCase("edit")){
@@ -98,9 +103,9 @@ public class SPController extends HttpServlet {
 					
 				}
 				
-			}else{
+			}
 					
-				
+			if(type!=null){	
 				if(type.equalsIgnoreCase("Bill")){
 					forward=LIST_BILL_SP;
 					List<BillServicePriceDTO> sps = new ArrayList<BillServicePriceDTO>();
@@ -119,17 +124,12 @@ public class SPController extends HttpServlet {
 					
 					List<EnvServicePriceDTO> sps = new ArrayList<EnvServicePriceDTO>();
 					
-					
 					try {
 						sps = cacheSP.getAllEnv();
 					} catch (ExecutionException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					sps.get(0).activar();
-					sps.get(2).desactivar();
-					sps.get(4).activar();
 					
 					request.setAttribute("sps", sps);
 				}
@@ -153,11 +153,7 @@ public class SPController extends HttpServlet {
 			forward=ERROR_PAGE;
 		}*/
 		
-	
-		
-	
-		
-		
+
 		
 		
 		RequestDispatcher view = request.getRequestDispatcher(forward);
@@ -170,16 +166,21 @@ public class SPController extends HttpServlet {
 		
 		String type = request.getParameter("tipoSP");
 		String idSP = request.getParameter("idSP");
+		String forward = "";
+		boolean edit = false;
+		
 		
 		if(idSP!=null){
-			//TODO: accion editar
+			edit = true;
 		}
 		
 		if(type.equalsIgnoreCase("RecMMS") || type.equalsIgnoreCase("RecSMS")){
 			int operador = Integer.parseInt(request.getParameter("selectOperador"));
-			int la = Integer.parseInt(request.getParameter("la"));
+			String la = request.getParameter("la");
 			String servicio = request.getParameter("servicio");
-			Double precio = Double.parseDouble(request.getParameter("precio"));
+			String precio = request.getParameter("precio");
+			boolean activo = true;
+			
 			
 			TipoRec tr;
 			if(type.substring(3).equals("MMS"))
@@ -187,14 +188,172 @@ public class SPController extends HttpServlet {
 			else
 				tr = TipoRec.SMS;
 			
-			RecServicePriceDTO sp = new RecServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+			if(edit){
+				String radios = request.getParameter("radios");
+				if(radios.equals("1"))
+					activo = false;
+			}
 			
-			//TODO: Insert via cache o dao?
+			
+			if(edit){
+				RecServicePriceDTO sp = new RecServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+				if(activo)
+					sp.activar();
+				else
+					sp.desactivar();
+				cacheSP.actualizarSP(sp);
+			}
+			else{
+				RecServicePriceDTO sp = new RecServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+				cacheSP.agregarSP(sp);
+			}
+			
+			forward = SUCCESS;
 		}
 		
-		//TODO: Otros tipos
+		else if(type.equalsIgnoreCase("EnvSMS") || type.equalsIgnoreCase("EnvMMS") || type.equalsIgnoreCase("EnvVSMS")){
+			int operador = Integer.parseInt(request.getParameter("selectOperador"));
+			String tipoEnv = type.substring(3);
+			String canal = request.getParameter("canal");
+			String servicio = request.getParameter("servicio");
+			String precio = request.getParameter("precio");
+			String tipoEstrategia = request.getParameter("tipoEstrategia");
+			Estrategia estrategia = Estrategia.FULLPRICE;
+			TipoEnv tipo = TipoEnv.SMSWP;
+			Boolean cache = request.getParameter("cache")!=null;
+			boolean activo = true;
+			
+			if(tipoEstrategia.equals("asc"))
+				estrategia = Estrategia.ASCENDENTE;
+			else if(tipoEstrategia.equals("dsc"))
+				estrategia = Estrategia.DESCENDENTE;
+			else if(tipoEstrategia.equals("fin"))
+				estrategia = Estrategia.FINANCE;
+			
+			if(tipoEnv.equals("MMS"))
+				tipo = TipoEnv.MMS;
+			if(tipoEnv.equals("VSMS"))
+				tipo = TipoEnv.VSMS;
+			
+			String[] fpSPs = request.getParameterValues("newSP");
+			String args = "";
+			
+			if(!edit){
+				if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
+					for(int i = 0; i<fpSPs.length;i++){
+						if(i!=0)
+							args = args + "|";
+						
+						args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
+						
+					}
+				}
+				else{
+					args = request.getParameter("args");
+				}
+					
+			}
+			else{
+				args = request.getParameter("args");
+			}
+			
+			
+			if(edit){
+				String radios = request.getParameter("radios");
+				if(radios.equals("1"))
+					activo = false;
+			}
+			
+			if(edit){
+				EnvServicePriceDTO sp = new EnvServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
+				if(activo)
+					sp.activar();
+				else
+					sp.desactivar();
+				
+				cacheSP.actualizarSP(sp);
+			}
+			else{
+				EnvServicePriceDTO sp = new EnvServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
+				cacheSP.agregarSP(sp);
+			}
+			
+			forward = SUCCESS;
+			
+		}
+		else if(type.equalsIgnoreCase("Bill")){
+			int operador = Integer.parseInt(request.getParameter("selectOperador"));
+			String canal = request.getParameter("canal");
+			String servicio = request.getParameter("servicio");
+			String precio = request.getParameter("precio");
+			String tipoEstrategia = request.getParameter("tipoEstrategia");
+			Estrategia estrategia = Estrategia.FULLPRICE;
+			Boolean cache = request.getParameter("cache")!=null;
+			boolean activo = true;
+			
+			if(tipoEstrategia.equals("asc"))
+				estrategia = Estrategia.ASCENDENTE;
+			else if(tipoEstrategia.equals("dsc"))
+				estrategia = Estrategia.DESCENDENTE;
+			else if(tipoEstrategia.equals("fin"))
+				estrategia = Estrategia.FINANCE;
+			
+			
+			String[] fpSPs = request.getParameterValues("newSP");
+			String args = "";
+			
+			if(!edit){
+				if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
+					for(int i = 0; i<fpSPs.length;i++){
+						if(i!=0)
+							args = args + "|";
+						
+						args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
+						
+					}
+				}
+				else{
+					args = request.getParameter("args");
+				}
+					
+			}
+			else{
+				args = request.getParameter("args");
+			}
+			
+			
+			if(edit){
+				String radios = request.getParameter("radios");
+				if(radios.equals("1"))
+					activo = false;
+			}
+			
+			if(edit){
+				BillServicePriceDTO sp = new BillServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
+				if(activo)
+					sp.activar();
+				else
+					sp.desactivar();
+				
+				cacheSP.actualizarSP(sp);
+			}
+			else{
+				BillServicePriceDTO sp = new BillServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
+				cacheSP.agregarSP(sp);
+			}
+			
+			forward = SUCCESS;	
+		}
 		
-		RequestDispatcher view = request.getRequestDispatcher(ERROR_PAGE);
+		else{
+			forward = ERROR_PAGE;
+		}
+		
+		
+		
+		
+		
+		RequestDispatcher view = request.getRequestDispatcher(forward);
 		view.forward(request, response);
 		
 	}

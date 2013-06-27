@@ -22,7 +22,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="nmovil">Ingrese N° Móvil:</label>
+  <label class="control-label" for="nmovil">N° Móvil:</label>
   <div class="controls">
     <input id="nmovil" name="nmovil" type="text" placeholder="ej: 99988777" class="input-xlarge" required="">
     
@@ -31,7 +31,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="la">Ingrese LA:</label>
+  <label class="control-label" for="la">LA:</label>
   <div class="controls">
     <input id="la" name="la" type="text" placeholder="ej: 4433" class="input-xlarge" required="">
     
@@ -41,7 +41,7 @@
 
 <!-- Text input-->
 <div class="control-group">
-  <label class="control-label" for="url">Ingrese URL:</label>
+  <label class="control-label" for="url">URL:</label>
   <div class="controls">
     <input id="url" name="url" type="text" placeholder="ej: http://name.domain" class="input-xlarge">
     
@@ -50,7 +50,7 @@
 
 <!-- Textarea -->
 <div class="control-group">
-  <label class="control-label" for="textarea">Texto a Enviar</label>
+  <label class="control-label" for="textarea">Texto a Enviar:</label>
   <div class="controls">
   		<div class="span12">                     
     		<textarea id="text" name="text" placeholder="160 Caracteres máximo..."></textarea>
@@ -59,7 +59,7 @@
 </div>
 
 <div class="form-actions">
-    <button id="probar" name="probar" class="btn btn-primary">Probar SP</button>
+    <button id="probar" name="probar" class="btn btn-primary">Probar</button>
     <button id="canclear" name="canclear" class="btn btn-danger">Cancelar</button>
 </div>
 
