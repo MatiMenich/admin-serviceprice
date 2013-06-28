@@ -16,7 +16,7 @@ public class BillServicePriceDTO extends ServicePriceDTO {
 		super();
 	}
 	
-	public BillServicePriceDTO(int id, Operador operador , String servicio, double precio,Estrategia estrategia, String canal, String args,boolean cache){
+	public BillServicePriceDTO(int id, Operador operador , String servicio, String precio,Estrategia estrategia, String canal, String args,boolean cache){
 		super();
 		this.id=id;
 		this.tipo="Billing";

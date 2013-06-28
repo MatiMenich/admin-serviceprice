@@ -2,6 +2,8 @@ package com.movix.adminSP.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.movix.adminSP.cache.SPCache;
+import com.movix.adminSP.model.comparators.OperadorComparator;
 import com.movix.adminSP.model.dto.BillServicePriceDTO;
 import com.movix.adminSP.model.dto.EnvServicePriceDTO;
 import com.movix.adminSP.model.dto.EnvServicePriceDTO.TipoEnv;
@@ -63,7 +66,12 @@ public class SPController extends HttpServlet {
 				else if(action.equalsIgnoreCase("edit")){
 					
 					int idSP = Integer.parseInt(request.getParameter("idSP"));
-					request.setAttribute("opList", Operador.values());
+					
+					List<Operador> opList = new ArrayList<Operador>(Arrays.asList(Operador.values()));
+					Collections.sort(opList , new OperadorComparator());
+					
+					request.setAttribute("opList", opList);
+					
 					
 					ServicePriceDTO sp = cacheSP.getSP(idSP);
 					request.setAttribute("sp",sp);
@@ -76,7 +84,10 @@ public class SPController extends HttpServlet {
 				}
 				else if(action.equalsIgnoreCase("add")){
 					
-					request.setAttribute("opList", Operador.values());
+					List<Operador> opList = new ArrayList<Operador>(Arrays.asList(Operador.values()));
+					Collections.sort(opList , new OperadorComparator());
+					
+					request.setAttribute("opList", opList);
 					forward= ADD;
 				}
 				

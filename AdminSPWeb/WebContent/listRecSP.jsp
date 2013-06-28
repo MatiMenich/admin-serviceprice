@@ -35,18 +35,16 @@
 				"sDom" : 'rtlp<"clear">',
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
-				"aoColumns": [
-					{ "sWidth": "5%" , "sClass": "center", "bSortable" : false},  
-					{ "sWidth": "30%" }, 
+				"aoColumns": [ 
+					{ "sWidth": "20%" }, 
 					{ "sWidth": "15%" }, 
-					{ "sWidth": "15%"},
+					{ "sWidth": "30%"},
 					{ "sWidth": "15%"},
 					{ "sWidth": "10%"},
 					{ "sWidth": "10%" , "sClass": "center" ,"bSortable" : false}
 				]
 			}).columnFilter({
 				aoColumns:[
-					{ sSelector: "#estado" , type:"select" },
 					{ sSelector: "#operador" , type:"select" },
 					{ sSelector: "#tipo" , type:"select" },
 					{ sSelector: "#LA" , type:"select" },
@@ -109,7 +107,7 @@
     <div class="navbar-inner">
         <ul class="nav">
             <li class="active"><a href="#">SP</a></li>
-            <li><a href="#">Scheduling</a></li>
+            <li><a href="http://admin.movixla.com/scheduling">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
             <li><a href="mailto:dave@fontawesome.io"><i class="icon-user icon-white icon-large"></i>&nbsp; MatiMenich</a></li>
@@ -169,12 +167,11 @@
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
 	<thead>
 		<tr>
-		<th>Estado</th>
         <th>Operador</th>
         <th>Tipo</th>
-        <th>LA</th>
         <th>Servicio</th>
         <th>Precio</th>
+        <th>LA</th>
         <th>Acciones</th>
 		</tr>
 	</thead>
@@ -182,13 +179,18 @@
 		<c:forEach var="sp" items="${sps}">
 		
 		<tr class="odd_gradeA">
-		<td class="center" width="1">${sp.getEstado().toString()=="TESTING" || sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Inactivo" id="inactivo">' :  
-										'<img src="images/active.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Activo" id="activo">'}</td>
         <td><span class="label label-info">${sp.getOperador().getPais().getCodigo().toUpperCase()}</span> ${sp.getOperador().name().split("_")[0].substring(0,1).toUpperCase().concat(sp.getOperador().name().split("_")[0].substring(1).toLowerCase()) }</td>
         <td>${sp.getTipoRec()}</td>
+        <td>${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '<span class="label label-important">' : ""} 
+	        ${sp.getServicio() } 
+	        ${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '</span>' : ""}
+	    </td>
+        <td>${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '<span class="label label-important">' : ""} 
+        	${sp.getPrecio() } 
+        	${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '</span>' : ""}	
+        </td>
         <td>${sp.getLA() }</td>
-        <td>${sp.getServicio() }</td>
-        <td>${sp.getPrecio() }</td>
+        
         <td class="center">
         <div class="btn-group">
         	<a class="btn disabled" href="#"><i class="icon-time icon-large"></i></a> 

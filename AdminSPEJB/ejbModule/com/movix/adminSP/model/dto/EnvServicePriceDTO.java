@@ -21,7 +21,7 @@ public class EnvServicePriceDTO extends ServicePriceDTO {
 		super();
 	}
 	
-	public EnvServicePriceDTO(int id,Operador operador,TipoEnv tipo,String servicio,double precio,Estrategia estrategia,String canal,String args,boolean cache){
+	public EnvServicePriceDTO(int id,Operador operador,TipoEnv tipo,String servicio,String precio,Estrategia estrategia,String canal,String args,boolean cache){
 		super();
 		this.id=id;
 		this.tipo="Envio";

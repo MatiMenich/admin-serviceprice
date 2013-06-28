@@ -10,7 +10,7 @@ public abstract class ServicePriceDTO {
 	protected int id;
 	protected String tipo;
 	protected String servicio;
-	protected double precio;
+	protected String precio;
 	protected Operador operador;
 	
 	public enum Estrategia{
@@ -29,7 +29,7 @@ public abstract class ServicePriceDTO {
 		
 	}
 	
-	public ServicePriceDTO(int id, String tipo, String servicio, Integer precio , Operador operador){
+	public ServicePriceDTO(int id, String tipo, String servicio, String precio , Operador operador){
 		this.id=id;
 		this.tipo = tipo;
 		this.servicio = servicio;
@@ -63,7 +63,7 @@ public abstract class ServicePriceDTO {
 		this.servicio = servicio;
 	}
 
-	public double getPrecio() {
+	public String getPrecio() {
 		return precio;
 	}
 
@@ -76,7 +76,7 @@ public abstract class ServicePriceDTO {
 		this.operador = operador;
 	}
 
-	public void setPrecio(double precio) {
+	public void setPrecio(String precio) {
 		this.precio = precio;
 	}
 	

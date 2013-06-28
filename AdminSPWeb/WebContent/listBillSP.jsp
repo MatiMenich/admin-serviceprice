@@ -31,15 +31,14 @@
 				"sPaginationType": "bootstrap",
 				"bAutoWidth": false, // Disable the auto width calculation 
 				"aoColumns": [
-					{ "sWidth": "5%"  , "bSortable" : false },  
 					{ "sWidth": "10%" }, 
-					{ "sWidth": "15%" }, 
+					{ "sWidth": "25%" }, 
 					{ "sWidth": "5%"},
-					{ "sWidth": "14%"},
-					{ "sWidth": "10%"},
-					{ "sWidth": "25%"},
+					{ "sWidth": "12%"},
+					{ "sWidth": "9%"},
+					{ "sWidth": "17%"},
 					{ "sWidth": "5%" , "bSortable" : false},
-					{ "sWidth": "11%" , "bSortable" : false }
+					{ "sWidth": "13%" , "bSortable" : false }
 				]
 			});
 			$.extend( $.fn.dataTableExt.oStdClasses, {
@@ -93,11 +92,11 @@
 	    
 	    <style type="text/css">
 			#example {
-				
+				margin: 0 auto;
+				clear: both;
 				overflow: hidden;
 				width: 100%;
 				table-layout: fixed;
-				text-overflow:ellipsis;
 				
 			}
 		</style>
@@ -109,7 +108,7 @@
     <div class="navbar-inner">
         <ul class="nav">
             <li class="active"><a href="#">SP</a></li>
-            <li><a href="#">Scheduling</a></li>
+            <li><a href="http://admin.movixla.com/scheduling">Scheduling</a></li>
         </ul>
         <ul class="nav pull-right">
             <li><a href="mailto:dave@fontawesome.io"><i class="icon-user icon-white icon-large"></i>&nbsp; MatiMenich</a></li>
@@ -150,7 +149,6 @@
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="example">
 	<thead>
 		<tr>
-		<th>Estado</th>
         <th>Operador</th>
         <th>Servicio</th>
         <th>Precio</th>
@@ -165,15 +163,18 @@
 		<c:forEach var="sp" items="${sps}">
 		
 		<tr class="odd_gradeA">
-		<td class="center" width="1">${sp.getEstado().toString()=="INACTIVO" ? '<img src="images/inactive.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Inactivo" id="inactivo">' : 
-										sp.getEstado().toString()=="TESTING" ? '<img src="images/test.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="En prueba" id="testing">' : 
-										'<img src="images/active.jpg" width="15" height="15" class="img-circle" rel="tooltip" data-toggle="tooltip" title="Activo" id="activo">'}</td>
         <td><span class="label label-info">${sp.getOperador().getPais().getCodigo().toUpperCase()}</span> ${sp.getOperador().name().split("_")[0].substring(0,1).toUpperCase().concat(sp.getOperador().name().split("_")[0].substring(1).toLowerCase()) }</td>
-        <td>${sp.getServicio()}</td>
-        <td>${sp.getPrecio() }</td>
-        <td>${sp.getCanal() }</td>
+        <td>${sp.getEstado().toString()=="INACTIVO" ? '<span class="label label-important">' : sp.getEstado().toString()=="TESTING" ? '<span class="label label-warning">' : ""} 
+	        ${sp.getServicio() } 
+	        ${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '</span>' : ""}
+	    </td>
+        <td>${sp.getEstado().toString()=="INACTIVO" ? '<span class="label label-important">' : sp.getEstado().toString()=="TESTING" ? '<span class="label label-warning">' : ""}
+        	${sp.getPrecio() } 
+        	${sp.getEstado().toString()=="INACTIVO" || sp.getEstado().toString()=="TESTING" ? '</span>' : ""}	
+        </td>
+        <td><div style="overflow:hidden;text-overflow:ellipsis;">${sp.getCanal() }</div></td>
         <td>${sp.getEstrategia() }</td>
-        <td style="word-wrap:break-word;">${sp.getArgs() }</td>
+        <td><div style="overflow:hidden;text-overflow:ellipsis;">${sp.getArgs() }</div></td>
         <td>${sp.hasCache() ? '<i class="icon-ok-sign icon-large"></i>' : '<i class="icon-remove-sign icon-large"></i>'}</td>
         <td class="center">
         <div class="btn-group">

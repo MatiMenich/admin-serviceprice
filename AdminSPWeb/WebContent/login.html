@@ -2,10 +2,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
- <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/site.css">
-    <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/css/pygments.css">
-    <link rel="stylesheet" href="http://fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.min.css">
+<title>Login SP</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+<script type="text/javascript">
+	window.location.href = "SPController?type=Env"; 
+</script>
+
 </head>
 
 <body>
@@ -15,15 +17,15 @@
 		<div class="span4 offset4 well">
 			<legend>Please Sign In</legend>
           	<div class="alert alert-error">
-                <a class="close" data-dismiss="alert" href="#">×</a>Incorrect Username or Password!
+                <a class="close" data-dismiss="alert" href="#">×</a>Usuario o Contraseña Incorrecta!
             </div>
 			<form method="POST" action="" accept-charset="UTF-8">
-			<input type="text" id="username" class="span4" name="username" placeholder="Username">
-			<input type="password" id="password" class="span4" name="password" placeholder="Password">
-            <label class="checkbox">
-            	<input type="checkbox" name="remember" value="1"> Remember Me
-            </label>
-			<button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
+				<input type="text" id="username" class="span4" name="username" placeholder="Username">
+				<input type="password" id="password" class="span4" name="password" placeholder="Password">
+	            <label class="checkbox">
+	            	<input type="checkbox" name="remember" value="1"> Remember Me
+	            </label>
+				<button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
 			</form>    
 		</div>
 	</div>

@@ -347,7 +347,8 @@
 					<label class="control-label">Cache</label>
 					<div class="controls">
 						<div class="row-fluid">
-							 <input type="checkbox" name="cache" id="cache" value="hasCache">
+							 <input type="checkbox" name="cache" id="cache" value="hasCache" ${sp.getTipo()=="Envio" && sp.hasCache() ? 'checked' : 
+																							   sp.getTipo()=="Billing" && sp.hasCache() ? 'checked' : "" }>
 						</div>
 					</div>
 				</div>

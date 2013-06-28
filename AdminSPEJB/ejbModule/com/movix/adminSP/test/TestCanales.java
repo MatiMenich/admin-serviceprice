@@ -5,7 +5,6 @@ import java.util.List;
 import com.movix.adminSP.model.dao.CanalDAO;
 import com.movix.adminSP.model.dao.CanalDAOFactory;
 import com.movix.adminSP.model.dto.CanalDTO;
-import com.movix.shared.Operador;
 
 public class TestCanales {
 
@@ -18,7 +17,7 @@ public class TestCanales {
 		 List<CanalDTO> canales = canalDAO.findAll();
 		 
 		 for(CanalDTO canal : canales){
-			 System.out.println(canal.getNombre());
+			 System.out.println("CANAL Nombre: "+canal.getNombre()+" , IdOperador: "+canal.getIdOperador());
 		 }
 
 	}

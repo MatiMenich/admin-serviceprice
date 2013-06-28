@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.movix.adminSP.model.dto.CanalDTO;
-import com.movix.shared.Operador;
 import com.movixla.service.priorities.client.PrioritiesClient;
 import com.movixla.service.priorities.common.OperatorRate;
 

@@ -17,24 +17,35 @@ import com.movixla.service.sp.common.SPEntry;
 public class ServicePriceDAOImpl implements ServicePriceDAO {
 
 	
-	//TODO: Pedir que upsert devuelva el id o hashcode al ingresar
 	@Override
 	public int agregar(ServicePriceDTO sp) {
 		SPsClient spInstance = SPsClient.getInstance();
 		
 		if(sp.getTipo()=="Envio"){
 			EnvServicePriceDTO envSP = (EnvServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forSending(envSP.getOperador().getIdBD(), envSP.getTipoEnv().toString(), envSP.getServicio(), String.valueOf(envSP.getPrecio()), envSP.getCanal(), envSP.getEstrategia().toString(), envSP.getArgs(), true));
+			String estrategia = "";
+			if(!envSP.getEstrategia().equals(Estrategia.FULLPRICE)){
+				estrategia=envSP.getEstrategia().toString();
+			}			
+			SPEntry envSPEntry = SPEntry.forSending(envSP.getOperador().getIdBD(), envSP.getTipoEnv().toString().toLowerCase(), envSP.getServicio(), envSP.getPrecio(), envSP.getCanal(), estrategia, envSP.getArgs(), true);
+			envSPEntry.setCache(envSP.hasCache());
+			spInstance.upsert(envSPEntry);
 		}
 		
 		if(sp.getTipo()=="Recepcion"){
 			RecServicePriceDTO recSP= (RecServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forReception(recSP.getOperador().getIdBD(), String.valueOf(recSP.getLA()), recSP.getTipoRec(), recSP.getServicio(), String.valueOf(recSP.getPrecio()), true, true, true));
+			spInstance.upsert(SPEntry.forReception(recSP.getOperador().getIdBD(), recSP.getLA(), recSP.getTipoRec(), recSP.getServicio(), recSP.getPrecio(), true, false, true));
 		}
 		
 		if(sp.getTipo()=="Billing"){
 			BillServicePriceDTO billSP = (BillServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forSending(billSP.getOperador().getIdBD(),"bill", billSP.getServicio(), String.valueOf(billSP.getPrecio()), billSP.getCanal(), billSP.getEstrategia().toString(), billSP.getArgs(), true));
+			String estrategia = "";
+			if(!billSP.getEstrategia().equals(Estrategia.FULLPRICE)){
+				estrategia=billSP.getEstrategia().toString();
+			}	
+			SPEntry billSPEntry = SPEntry.forSending(billSP.getOperador().getIdBD(),"bill", billSP.getServicio(), billSP.getPrecio(), billSP.getCanal(), estrategia, billSP.getArgs(), true);
+			billSPEntry.setCache(billSP.hasCache());
+			spInstance.upsert(billSPEntry);
 		}
 		
 		return 0;
@@ -42,103 +53,82 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 
 	//TODO: notificar ventas default TRUE
 	
-	//TODO: Cache en rec y no en envio?
 	@Override
 	public void actualizar(ServicePriceDTO sp) {
 		
 		SPsClient spInstance = SPsClient.getInstance();
 		
+		int idSP = sp.getId();
+		
+		List<SPEntry> spEntries = spInstance.getAllServicePrices();
+		SPEntry editSP = new SPEntry();
+		
+		for(SPEntry spEntry : spEntries){
+			if(spEntry.hashCode()==idSP)
+				editSP=spEntry;
+		}
+		
+				
 		if(sp.getTipo()=="Envio"){
+			
 			EnvServicePriceDTO envSP = (EnvServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forSending(envSP.getOperador().getIdBD(), envSP.getTipoEnv().toString(), envSP.getServicio(), String.valueOf(envSP.getPrecio()), envSP.getCanal(), envSP.getEstrategia().toString(), envSP.getArgs(), true));
+			
+			editSP.setOperator_id(envSP.getOperador().getIdBD());
+			editSP.setService(envSP.getServicio());
+			editSP.setType(envSP.getTipoEnv().toString().toLowerCase());
+			editSP.setPrice(envSP.getPrecio());
+			editSP.setChannel(envSP.getCanal());
+			editSP.setStrategy(envSP.getEstrategia().toString());
+			editSP.setArgs(envSP.getArgs());
+			editSP.setCache(envSP.hasCache());
+			editSP.setActive(envSP.getEstado().equals(ServicePriceDTO.Estado.ACTIVO));
+			
+			spInstance.upsert(editSP);
 		}
 		
 		if(sp.getTipo()=="Recepcion"){
+			
 			RecServicePriceDTO recSP= (RecServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forReception(recSP.getOperador().getIdBD(), String.valueOf(recSP.getLA()), recSP.getTipoRec(), recSP.getServicio(), String.valueOf(recSP.getPrecio()), true, true, true));
+			
+			editSP.setOperator_id(recSP.getOperador().getIdBD());
+			editSP.setChannel(recSP.getServicio()+"/"+recSP.getPrecio());
+			editSP.setPrice(recSP.getTipoRec().toString());
+			editSP.setService(recSP.getLA());
+			editSP.setType("rec");
+			editSP.setCache(false);
+			editSP.setActive(recSP.getEstado().equals(ServicePriceDTO.Estado.ACTIVO));
+			
+			spInstance.upsert(editSP);
 		}
 		
 		if(sp.getTipo()=="Billing"){
 			BillServicePriceDTO billSP = (BillServicePriceDTO)sp;
-			spInstance.upsert(SPEntry.forSending(billSP.getOperador().getIdBD(),"bill", billSP.getServicio(), String.valueOf(billSP.getPrecio()), billSP.getCanal(), billSP.getEstrategia().toString(), billSP.getArgs(), true));
+			
+			editSP.setOperator_id(billSP.getOperador().getIdBD());
+			editSP.setService(billSP.getServicio());
+			editSP.setType("bill");
+			editSP.setPrice(billSP.getPrecio());
+			editSP.setChannel(billSP.getCanal());
+			editSP.setStrategy(billSP.getEstrategia().toString());
+			editSP.setArgs(billSP.getArgs());
+			editSP.setCache(billSP.hasCache());
+			editSP.setActive(billSP.getEstado().equals(ServicePriceDTO.Estado.ACTIVO));
+			
+			spInstance.upsert(editSP);
 		}
 	}
 	
 	@Override
 	public List<ServicePriceDTO> findActive() {
-		SPsClient spInstance = SPsClient.getInstance();
-		List<SPEntry> spEntries = spInstance.getServicePrices();
 		
-		List<ServicePriceDTO> sps = new ArrayList<ServicePriceDTO>();
-		
-		
-		for(SPEntry spEntry : spEntries){
-			if(spEntry.getType().equals("rec")){
-				
-				String[] servicePrice = spEntry.getChannel().split("/");
-				
-				TipoRec tipoRec;
-				if(spEntry.getPrice().equals("SMS"))
-					tipoRec= TipoRec.SMS;
-				else
-					tipoRec=TipoRec.MMS;
-				
-				sps.add(new RecServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()),tipoRec,servicePrice[0],
-												Double.parseDouble(servicePrice[1]),Integer.parseInt(spEntry.getService())));
-				
-			}
-			
-			if(spEntry.getType().equals("bill")){
-				
-				Estrategia estrategia;
-				if(spEntry.getStrategy().equals("ASCENDENTE"))
-					estrategia= Estrategia.ASCENDENTE;
-				if(spEntry.getStrategy().equals("DESCENDENTE"))
-					estrategia= Estrategia.DESCENDENTE;
-				if(spEntry.getStrategy().equals("FINANCE"))
-					estrategia= Estrategia.FINANCE;
-				if(spEntry.getStrategy().equals("FULLPRICE"))
-					estrategia= Estrategia.FULLPRICE;
-				else
-					estrategia= Estrategia.FULLPRICE;
-				
-				
-				sps.add(new BillServicePriceDTO(spEntry.hashCode(), Operador.getOperadorPorIdBD(spEntry.getOperator_id()),spEntry.getService(),
-												Double.parseDouble(spEntry.getPrice()),estrategia,spEntry.getChannel(),
-												spEntry.getArgs(),spEntry.isCache()));
-				
-			}
-			
-			if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms")||spEntry.getType().equals("mms")||spEntry.getType().equals("vsms")){
-				
-				Estrategia estrategia;
-				if(spEntry.getStrategy().equals("ASCENDENTE"))
-					estrategia= Estrategia.ASCENDENTE;
-				if(spEntry.getStrategy().equals("DESCENDENTE"))
-					estrategia= Estrategia.DESCENDENTE;
-				if(spEntry.getStrategy().equals("FINANCE"))
-					estrategia= Estrategia.FINANCE;
-				if(spEntry.getStrategy().equals("FULLPRICE"))
-					estrategia= Estrategia.FULLPRICE;
-				else
-					estrategia= Estrategia.FULLPRICE;
-				
-				TipoEnv tipoEnv;
-				if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms"))
-					tipoEnv = TipoEnv.SMSWP;
-				if(spEntry.getType().equals("vsms"))
-					tipoEnv = TipoEnv.VSMS;
-				else
-					tipoEnv = TipoEnv.MMS;
-				
-				sps.add(new EnvServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()), tipoEnv,spEntry.getService(),
-												Double.parseDouble(spEntry.getPrice()),estrategia,
-												spEntry.getChannel(),spEntry.getArgs(),spEntry.isCache()));
-				
-			}
+		List<ServicePriceDTO> sps = this.findALL();
+		List<ServicePriceDTO> activeSPs = new ArrayList<ServicePriceDTO>();
+		for(ServicePriceDTO sp : sps){
+			if(sp.getEstado().equals(ServicePriceDTO.Estado.ACTIVO))
+					activeSPs.add(sp);
 		}
 		
-		return sps;
+		return activeSPs;
 	}
 
 	@Override
@@ -152,7 +142,8 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 		for(SPEntry spEntry : spEntries){
 			if(spEntry.getType().equals("rec")){
 				
-				String[] servicePrice = spEntry.getChannel().split("/");
+				String delimiter="/";
+				String[] servicePrice = spEntry.getChannel().split(delimiter);
 				
 				TipoRec tipoRec;
 				if(spEntry.getPrice().equals("SMS"))
@@ -160,23 +151,37 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 				else
 					tipoRec=TipoRec.MMS;
 				
-				sps.add(new RecServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()),tipoRec,servicePrice[0],
-												Double.parseDouble(servicePrice[1]),
-												Integer.parseInt(spEntry.getService())));
+				String price;
+				if(servicePrice.length==1){
+					price="0";
+				}
+				else{
+					price=servicePrice[1];
+				}
+				
+				RecServicePriceDTO recSp = new RecServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()),
+																tipoRec,servicePrice[0], price, spEntry.getService());
+				//TODO: Ver en appconfig los en testing
+				if(spEntry.isActive())
+					recSp.activar();
+				else
+					recSp.desactivar();
+				
+				sps.add(recSp);
 				
 			}
 			
-			if(spEntry.getType().equals("bill")){
+			else if(spEntry.getType().equals("bill")){
 				
 				Estrategia estrategia;
 				if(spEntry.getStrategy()!=null){
 					if(spEntry.getStrategy().equals("ASCENDENTE"))
 						estrategia= Estrategia.ASCENDENTE;
-					if(spEntry.getStrategy().equals("DESCENDENTE"))
+					else if(spEntry.getStrategy().equals("DESCENDENTE"))
 						estrategia= Estrategia.DESCENDENTE;
-					if(spEntry.getStrategy().equals("FINANCE"))
+					else if(spEntry.getStrategy().equals("FINANCE"))
 						estrategia= Estrategia.FINANCE;
-					if(spEntry.getStrategy().equals("FULLPRICE"))
+					else if(spEntry.getStrategy().equals("FULLPRICE"))
 						estrategia= Estrategia.FULLPRICE;
 					else
 						estrategia= Estrategia.FULLPRICE;
@@ -185,25 +190,37 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 					estrategia= Estrategia.FULLPRICE;
 				
 				String price = spEntry.getPrice();
-				price = price.replaceAll(",",".");
 				
-				sps.add(new BillServicePriceDTO(spEntry.hashCode(), Operador.getOperadorPorIdBD(spEntry.getOperator_id()),spEntry.getService(),
-												Double.parseDouble(price),estrategia,spEntry.getChannel(),
-												spEntry.getArgs(),spEntry.isCache()));
+				
+				BillServicePriceDTO billSp = new BillServicePriceDTO(spEntry.hashCode(), Operador.getOperadorPorIdBD(spEntry.getOperator_id()),spEntry.getService(),
+																		price,estrategia,spEntry.getChannel(),
+																		spEntry.getArgs(),spEntry.isCache());
+				
+				//TODO: Ver en appconfig los en testing
+				if(spEntry.isActive())
+					billSp.activar();
+				else
+					billSp.desactivar();
+				
+				sps.add(billSp);
+				
+				
+				
 				
 			}
 			
-			if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms")||spEntry.getType().equals("mms")||spEntry.getType().equals("vsms")){
+			
+			else if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms")||spEntry.getType().equals("mms")||spEntry.getType().equals("vsms")){
 				
 				Estrategia estrategia;
 				if(spEntry.getStrategy()!=null){
 					if(spEntry.getStrategy().equals("ASCENDENTE"))
 						estrategia= Estrategia.ASCENDENTE;
-					if(spEntry.getStrategy().equals("DESCENDENTE"))
+					else if(spEntry.getStrategy().equals("DESCENDENTE"))
 						estrategia= Estrategia.DESCENDENTE;
-					if(spEntry.getStrategy().equals("FINANCE"))
+					else if(spEntry.getStrategy().equals("FINANCE"))
 						estrategia= Estrategia.FINANCE;
-					if(spEntry.getStrategy().equals("FULLPRICE"))
+					else if(spEntry.getStrategy().equals("FULLPRICE"))
 						estrategia= Estrategia.FULLPRICE;
 					else
 						estrategia= Estrategia.FULLPRICE;
@@ -212,19 +229,26 @@ public class ServicePriceDAOImpl implements ServicePriceDAO {
 					estrategia= Estrategia.FULLPRICE;
 				
 				String price = spEntry.getPrice();
-				price = price.replaceAll(",",".");
 				
 				TipoEnv tipoEnv;
 				if(spEntry.getType().equals("smswp")||spEntry.getType().equals("web-push")||spEntry.getType().equals("sms"))
 					tipoEnv = TipoEnv.SMSWP;
-				if(spEntry.getType().equals("vsms"))
+				else if(spEntry.getType().equals("vsms"))
 					tipoEnv = TipoEnv.VSMS;
 				else
 					tipoEnv = TipoEnv.MMS;
 				
-				sps.add(new EnvServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()), tipoEnv,spEntry.getService(),
-												Double.parseDouble(price),estrategia,
-												spEntry.getChannel(),spEntry.getArgs(),spEntry.isCache()));
+				
+				EnvServicePriceDTO envSp = new EnvServicePriceDTO(spEntry.hashCode(),Operador.getOperadorPorIdBD(spEntry.getOperator_id()), tipoEnv,spEntry.getService(),
+																	price,estrategia,
+																	spEntry.getChannel(),spEntry.getArgs(),spEntry.isCache());
+				//TODO: Ver en appconfig los en testing
+				if(spEntry.isActive())
+					envSp.activar();
+				else
+					envSp.desactivar();
+				
+				sps.add(envSp);
 				
 			}
 		}

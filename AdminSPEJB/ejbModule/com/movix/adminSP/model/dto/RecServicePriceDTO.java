@@ -4,7 +4,7 @@ import com.movix.shared.Operador;
 
 public class RecServicePriceDTO extends ServicePriceDTO {
 
-	private int LA;
+	private String LA;
 	
 	
 	public enum TipoRec{
@@ -17,7 +17,7 @@ public class RecServicePriceDTO extends ServicePriceDTO {
 		super();
 	}
 	
-	public RecServicePriceDTO(int id, Operador operador, TipoRec tipo , String servicio, double precio, int LA){
+	public RecServicePriceDTO(int id, Operador operador, TipoRec tipo , String servicio, String precio, String LA){
 		super();
 		this.id=id;
 		this.operador=operador;
@@ -30,11 +30,11 @@ public class RecServicePriceDTO extends ServicePriceDTO {
 		
 	}
 
-	public int getLA() {
+	public String getLA() {
 		return this.LA;
 	}
 
-	public void setLA(int LA) {
+	public void setLA(String LA) {
 		this.LA = LA;
 	}
 
