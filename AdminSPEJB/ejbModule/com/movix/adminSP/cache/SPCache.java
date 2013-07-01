@@ -57,11 +57,6 @@ public class SPCache {
 				});
 	}
 	
-	//TODO: revisar
-	public void start() throws ExecutionException{
-		lastUpdate = new Date();
-		cache.get("Actual");
-	}
 
 	public List<ServicePriceDTO> get(String key) throws ExecutionException{
 		return cache.get(key);

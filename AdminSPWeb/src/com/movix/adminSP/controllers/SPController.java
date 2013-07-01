@@ -36,6 +36,7 @@ public class SPController extends HttpServlet {
     private SPCache cacheSP;   
     private static String EDIT ="/editarSP.jsp";
     private static String ADD ="/crearSP.jsp";
+    private static String CLONE ="/clonarSP.jsp";
     private static String LIST_BILL_SP ="/listBillSP.jsp";
     private static String LIST_ENV_SP ="/listEnvSP.jsp";
     private static String LIST_REC_SP ="/listRecSP.jsp";
@@ -78,8 +79,13 @@ public class SPController extends HttpServlet {
 					
 					forward = EDIT;
 				}
-				else if(action.equalsIgnoreCase("delete")){
-					//TODO: accion eliminar
+				else if(action.equalsIgnoreCase("clone")){
+					int idSP = Integer.parseInt(request.getParameter("idSP"));
+					
+					ServicePriceDTO sp = cacheSP.getSP(idSP);
+					request.setAttribute("sp", sp);
+					
+					forward = CLONE;
 				
 				}
 				else if(action.equalsIgnoreCase("add")){
@@ -181,185 +187,193 @@ public class SPController extends HttpServlet {
 		boolean edit = false;
 		
 		
-		if(idSP!=null){
-			edit = true;
+		if(request.getParameter("clone")!=null){
+			ServicePriceDTO sp = cacheSP.getSP(Integer.parseInt(idSP));
+			sp.setServicio(request.getParameter("nombre"));
+			cacheSP.agregarSP(sp);
+			forward=SUCCESS;
 		}
-		
-		if(type.equalsIgnoreCase("RecMMS") || type.equalsIgnoreCase("RecSMS")){
-			int operador = Integer.parseInt(request.getParameter("selectOperador"));
-			String la = request.getParameter("la");
-			String servicio = request.getParameter("servicio");
-			String precio = request.getParameter("precio");
-			boolean activo = true;
-			
-			
-			TipoRec tr;
-			if(type.substring(3).equals("MMS"))
-				tr = TipoRec.MMS;
-			else
-				tr = TipoRec.SMS;
-			
-			if(edit){
-				String radios = request.getParameter("radios");
-				if(radios.equals("1"))
-					activo = false;
-			}
-			
-			
-			if(edit){
-				RecServicePriceDTO sp = new RecServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
-				if(activo)
-					sp.activar();
-				else
-					sp.desactivar();
-				cacheSP.actualizarSP(sp);
-			}
-			else{
-				RecServicePriceDTO sp = new RecServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
-				cacheSP.agregarSP(sp);
-			}
-			
-			forward = SUCCESS;
-		}
-		
-		else if(type.equalsIgnoreCase("EnvSMS") || type.equalsIgnoreCase("EnvMMS") || type.equalsIgnoreCase("EnvVSMS")){
-			int operador = Integer.parseInt(request.getParameter("selectOperador"));
-			String tipoEnv = type.substring(3);
-			String canal = request.getParameter("canal");
-			String servicio = request.getParameter("servicio");
-			String precio = request.getParameter("precio");
-			String tipoEstrategia = request.getParameter("tipoEstrategia");
-			Estrategia estrategia = Estrategia.FULLPRICE;
-			TipoEnv tipo = TipoEnv.SMSWP;
-			Boolean cache = request.getParameter("cache")!=null;
-			boolean activo = true;
-			
-			if(tipoEstrategia.equals("asc"))
-				estrategia = Estrategia.ASCENDENTE;
-			else if(tipoEstrategia.equals("dsc"))
-				estrategia = Estrategia.DESCENDENTE;
-			else if(tipoEstrategia.equals("fin"))
-				estrategia = Estrategia.FINANCE;
-			
-			if(tipoEnv.equals("MMS"))
-				tipo = TipoEnv.MMS;
-			if(tipoEnv.equals("VSMS"))
-				tipo = TipoEnv.VSMS;
-			
-			String[] fpSPs = request.getParameterValues("newSP");
-			String args = "";
-			
-			if(!edit){
-				if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
-					for(int i = 0; i<fpSPs.length;i++){
-						if(i!=0)
-							args = args + "|";
-						
-						args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
-						
-					}
-				}
-				else{
-					args = request.getParameter("args");
-				}
-					
-			}
-			else{
-				args = request.getParameter("args");
-			}
-			
-			
-			if(edit){
-				String radios = request.getParameter("radios");
-				if(radios.equals("1"))
-					activo = false;
-			}
-			
-			if(edit){
-				EnvServicePriceDTO sp = new EnvServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
-				if(activo)
-					sp.activar();
-				else
-					sp.desactivar();
-				
-				cacheSP.actualizarSP(sp);
-			}
-			else{
-				EnvServicePriceDTO sp = new EnvServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
-				cacheSP.agregarSP(sp);
-			}
-			
-			forward = SUCCESS;
-			
-		}
-		else if(type.equalsIgnoreCase("Bill")){
-			int operador = Integer.parseInt(request.getParameter("selectOperador"));
-			String canal = request.getParameter("canal");
-			String servicio = request.getParameter("servicio");
-			String precio = request.getParameter("precio");
-			String tipoEstrategia = request.getParameter("tipoEstrategia");
-			Estrategia estrategia = Estrategia.FULLPRICE;
-			Boolean cache = request.getParameter("cache")!=null;
-			boolean activo = true;
-			
-			if(tipoEstrategia.equals("asc"))
-				estrategia = Estrategia.ASCENDENTE;
-			else if(tipoEstrategia.equals("dsc"))
-				estrategia = Estrategia.DESCENDENTE;
-			else if(tipoEstrategia.equals("fin"))
-				estrategia = Estrategia.FINANCE;
-			
-			
-			String[] fpSPs = request.getParameterValues("newSP");
-			String args = "";
-			
-			if(!edit){
-				if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
-					for(int i = 0; i<fpSPs.length;i++){
-						if(i!=0)
-							args = args + "|";
-						
-						args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
-						
-					}
-				}
-				else{
-					args = request.getParameter("args");
-				}
-					
-			}
-			else{
-				args = request.getParameter("args");
-			}
-			
-			
-			if(edit){
-				String radios = request.getParameter("radios");
-				if(radios.equals("1"))
-					activo = false;
-			}
-			
-			if(edit){
-				BillServicePriceDTO sp = new BillServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
-				if(activo)
-					sp.activar();
-				else
-					sp.desactivar();
-				
-				cacheSP.actualizarSP(sp);
-			}
-			else{
-				BillServicePriceDTO sp = new BillServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
-				cacheSP.agregarSP(sp);
-			}
-			
-			forward = SUCCESS;	
-		}
-		
 		else{
-			forward = ERROR_PAGE;
-		}
 		
+			if(idSP!=null){
+				edit = true;
+			}
+			
+			if(type.equalsIgnoreCase("RecMMS") || type.equalsIgnoreCase("RecSMS")){
+				int operador = Integer.parseInt(request.getParameter("selectOperador"));
+				String la = request.getParameter("la");
+				String servicio = request.getParameter("servicio");
+				String precio = request.getParameter("precio");
+				boolean activo = true;
+				
+				
+				TipoRec tr;
+				if(type.substring(3).equals("MMS"))
+					tr = TipoRec.MMS;
+				else
+					tr = TipoRec.SMS;
+				
+				if(edit){
+					String radios = request.getParameter("radios");
+					if(radios.equals("1"))
+						activo = false;
+				}
+				
+				
+				if(edit){
+					RecServicePriceDTO sp = new RecServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+					if(activo)
+						sp.activar();
+					else
+						sp.desactivar();
+					cacheSP.actualizarSP(sp);
+				}
+				else{
+					RecServicePriceDTO sp = new RecServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tr,servicio,precio,la);
+					cacheSP.agregarSP(sp);
+				}
+				
+				forward = SUCCESS;
+			}
+			
+			else if(type.equalsIgnoreCase("EnvSMS") || type.equalsIgnoreCase("EnvMMS") || type.equalsIgnoreCase("EnvVSMS")){
+				int operador = Integer.parseInt(request.getParameter("selectOperador"));
+				String tipoEnv = type.substring(3);
+				String canal = request.getParameter("canal");
+				String servicio = request.getParameter("servicio");
+				String precio = request.getParameter("precio");
+				String tipoEstrategia = request.getParameter("tipoEstrategia");
+				Estrategia estrategia = Estrategia.FULLPRICE;
+				TipoEnv tipo = TipoEnv.SMSWP;
+				Boolean cache = request.getParameter("cache")!=null;
+				boolean activo = true;
+				
+				if(tipoEstrategia.equals("asc"))
+					estrategia = Estrategia.ASCENDENTE;
+				else if(tipoEstrategia.equals("dsc"))
+					estrategia = Estrategia.DESCENDENTE;
+				else if(tipoEstrategia.equals("fin"))
+					estrategia = Estrategia.FINANCE;
+				
+				if(tipoEnv.equals("MMS"))
+					tipo = TipoEnv.MMS;
+				if(tipoEnv.equals("VSMS"))
+					tipo = TipoEnv.VSMS;
+				
+				String[] fpSPs = request.getParameterValues("newSP");
+				String args = "";
+				
+				if(!edit){
+					if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
+						for(int i = 0; i<fpSPs.length;i++){
+							if(i!=0)
+								args = args + "|";
+							
+							args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
+							
+						}
+					}
+					else{
+						args = request.getParameter("args");
+					}
+						
+				}
+				else{
+					args = request.getParameter("args");
+				}
+				
+				
+				if(edit){
+					String radios = request.getParameter("radios");
+					if(radios.equals("1"))
+						activo = false;
+				}
+				
+				if(edit){
+					EnvServicePriceDTO sp = new EnvServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
+					if(activo)
+						sp.activar();
+					else
+						sp.desactivar();
+					
+					cacheSP.actualizarSP(sp);
+				}
+				else{
+					EnvServicePriceDTO sp = new EnvServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),tipo,servicio,precio,estrategia,canal,args,cache);
+					cacheSP.agregarSP(sp);
+				}
+				
+				forward = SUCCESS;
+				
+			}
+			else if(type.equalsIgnoreCase("Bill")){
+				int operador = Integer.parseInt(request.getParameter("selectOperador"));
+				String canal = request.getParameter("canal");
+				String servicio = request.getParameter("servicio");
+				String precio = request.getParameter("precio");
+				String tipoEstrategia = request.getParameter("tipoEstrategia");
+				Estrategia estrategia = Estrategia.FULLPRICE;
+				Boolean cache = request.getParameter("cache")!=null;
+				boolean activo = true;
+				
+				if(tipoEstrategia.equals("asc"))
+					estrategia = Estrategia.ASCENDENTE;
+				else if(tipoEstrategia.equals("dsc"))
+					estrategia = Estrategia.DESCENDENTE;
+				else if(tipoEstrategia.equals("fin"))
+					estrategia = Estrategia.FINANCE;
+				
+				
+				String[] fpSPs = request.getParameterValues("newSP");
+				String args = "";
+				
+				if(!edit){
+					if(estrategia.equals(Estrategia.ASCENDENTE) || estrategia.equals(Estrategia.DESCENDENTE)){
+						for(int i = 0; i<fpSPs.length;i++){
+							if(i!=0)
+								args = args + "|";
+							
+							args = args + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getServicio() + "/" + cacheSP.getSP(Integer.parseInt(fpSPs[i])).getPrecio();
+							
+						}
+					}
+					else{
+						args = request.getParameter("args");
+					}
+						
+				}
+				else{
+					args = request.getParameter("args");
+				}
+				
+				
+				if(edit){
+					String radios = request.getParameter("radios");
+					if(radios.equals("1"))
+						activo = false;
+				}
+				
+				if(edit){
+					BillServicePriceDTO sp = new BillServicePriceDTO(Integer.parseInt(idSP),Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
+					if(activo)
+						sp.activar();
+					else
+						sp.desactivar();
+					
+					cacheSP.actualizarSP(sp);
+				}
+				else{
+					BillServicePriceDTO sp = new BillServicePriceDTO(0,Operador.getOperadorPorIdBD(operador),servicio,precio,estrategia,canal,args,cache);
+					cacheSP.agregarSP(sp);
+				}
+				
+				forward = SUCCESS;	
+			}
+			
+			else{
+				forward = ERROR_PAGE;
+			}
+		}
 		
 		
 		

@@ -191,9 +191,10 @@
         </td>
         <td>${sp.getLA() }</td>
         
-        <td class="center">
+        <td style="text-align:center;">
         <div class="btn-group">
         	<a class="btn disabled" href="#"><i class="icon-time icon-large"></i></a> 
+        	<a class="btn fancy" data-fancybox-type="iframe" href="SPController?action=clone&idSP=${sp.getId()}"><i class="icon-list-alt icon-large"></i></a> 
         	<a class="btn btn-warning fancy" data-fancybox-type="iframe" href="SPController?action=edit&idSP=${sp.getId()}"><i class="icon-edit icon-large"></i></a> 
         </div>
         </td>
